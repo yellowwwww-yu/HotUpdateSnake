@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Framwork
+namespace Framework
 {
     /// <summary>
     /// 全局事件中心（观察者模式 / 发布-订阅中心）
