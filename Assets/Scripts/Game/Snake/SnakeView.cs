@@ -139,7 +139,7 @@ public class SnakeView : MonoBehaviour
         LuaManager.Instance.Inject("SnakeView", this);
 
         // forceReload：require 有 package.loaded 缓存，不清的话第二次进场景 chunk 不会重新执行
-        LuaManager.Instance.DoFile("SnakeDemo", true);
+        LuaManager.Instance.DoFile("Game.SnakeDemo", true);
 
         // 必须先于 Call()：Lua 建蛇时会调 CreateNodes，那时 headPrefab / bodyPrefab 得已经拿到
         Init();

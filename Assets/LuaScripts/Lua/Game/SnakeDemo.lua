@@ -1,6 +1,6 @@
 -- 演示：一条蛇 + 鼠标转向。只做三件事：建蛇、把输入转成目标朝向、每帧推状态给表现层。
 
-local Snake = require('Snake')
+local Snake = require('Game.Snake')
 
 local snake
 
