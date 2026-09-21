@@ -11,9 +11,25 @@ public class CommonBundleLoader : MonoBehaviour
 
     IEnumerator Start()
     {
-        // 必须等下载阶段完成，包文件才在本地磁盘上
-        while (!Downloader.Instance.isReady)
+        // Downloader 为 null 说明常驻功能场景没加载：先把原因喊出来，别静默挂死
+        if (Downloader.Instance == null)
         {
+            Debug.LogError("Downloader 不存在（常驻功能场景未加载？）：常驻包将持续等待加载");
+        }
+
+        // 等下载阶段成功。失败时【刻意不退出循环】：
+        // 热更没成功游戏就不该继续，而停在这里等，玩家点重试、isReady 变 true 之后
+        // 本循环会自然通过——如果这里 yield break，重试成功后就没人加载常驻包了。
+        // failLogged 只是防止失败期间每帧刷日志。
+        bool failLogged = false;
+        while (Downloader.Instance == null || !Downloader.Instance.isReady)
+        {
+            if (!failLogged && Downloader.Instance != null && Downloader.Instance.hasFailed)
+            {
+                failLogged = true;
+                Debug.LogError($"热更下载失败，常驻包暂停加载，等待重试：{Downloader.Instance.lastError}");
+            }
+
             yield return null;
         }
 

@@ -21,6 +21,12 @@ using UnityEngine.UI;
 ///   downloadOnComplete : 下载完成（磁盘就绪，不代表已加载）
 ///   downloadOnFailed   : 仅下载阶段失败（运行期加载失败不再走这个事件）
 ///   onBundlesLoaded    : 常驻包已加载，可以安全取资源
+///
+/// 失败闭环：
+///   所有失败路径都收敛到 FailAndNotify —— 置 hasFailed / lastError、进度 UI 换成错误原因、
+///   亮出重试按钮（Awake 里代码绑定 onClick → StartDownload），并广播 downloadOnFailed。
+///   等待者（两个 Loader、LuaEnter）失败时【不退出循环】，而是留在原地等：
+///   重试成功后 isReady 翻转，它们会自然继续，因此不存在"重试成功了但没人重新驱动"的缺口。
 /// </summary>
 public class Downloader : Singleton<Downloader>
 {
@@ -47,12 +53,23 @@ public class Downloader : Singleton<Downloader>
     public Dictionary<string, AssetBundle> assetBundles = new Dictionary<string, AssetBundle>();
     public Dictionary<string, int> refCounts = new Dictionary<string, int>();
 
+    [Header("更新 UI")]
     [SerializeField] private Slider slider;
     [SerializeField] private Text text;
+    [SerializeField] private Button retryButton;   // 失败时才出现的重试按钮，代码里绑 onClick
+
+    [Header("单次网络请求超时（秒），0 = 不限")]
+    [SerializeField] private int timeout = 10;
 
     public Action downloadOnComplete;
     public Action<string> downloadOnFailed;
     public Action onBundlesLoaded;
+
+    /// <summary>下载阶段是否失败。调 StartDownload() 重试后会自动清零。</summary>
+    public bool hasFailed { get; private set; }
+
+    /// <summary>最后一次失败的原因，供 UI / 日志用。</summary>
+    public string lastError { get; private set; }
 
     protected override void Awake()
     {
@@ -65,16 +82,29 @@ public class Downloader : Singleton<Downloader>
             Directory.CreateDirectory(localBundlesPath);
         }
 
-        StartDownload();
+        if (retryButton != null)
+        {
+            retryButton.onClick.AddListener(StartDownload);   // 代码绑定，省得去 Inspector 拖 onClick
+        }
+
+        StartDownload();   // 里面会隐藏重试按钮，所以不要再单独 SetActive(false)
     }
 
-    /// <summary>启动下载；下载中或已完成时重复调用无效。失败后业务可再调它重试。</summary>
+    /// <summary>
+    /// 启动下载；下载中或已完成时重复调用无效。失败后业务可再调它重试。
+    /// 重试是"干净重来"：清掉失败状态，已下好的包会在对比阶段命中缓存，只补缺的那几个。
+    /// </summary>
     public void StartDownload()
     {
         if (isDownloading || isReady)
         {
             return;
         }
+
+        hasFailed = false;
+        lastError = null;
+        SetProgressUIVisible(true);   // 重试期间进度要看得见
+        SetRetryVisible(false);       // 但重试按钮要收起来，避免连点
 
         isDownloading = true;
         StartCoroutine(RunDownload());
@@ -214,6 +244,11 @@ public class Downloader : Singleton<Downloader>
         {
             using (UnityWebRequest www = UnityWebRequest.Get(url))
             {
+                if (timeout > 0)
+                {
+                    www.timeout = timeout;   // 服务器连上却不响应时，别在这一帧无限等下去
+                }
+
                 www.SendWebRequest();
 
                 while (!www.isDone)
@@ -369,19 +404,43 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// 下载阶段失败统一出口：刷新 UI 文案 + 触发 downloadOnFailed 事件。
+    /// 下载阶段失败统一出口：置失败状态、刷新 UI 文案、亮出重试按钮、触发 downloadOnFailed。
     /// 不隐藏进度 UI，把错误留在屏幕上，玩家可据此决定是否重试。
+    /// 由 FailAndNotify 写的 hasFailed 不会中断任何等待者——它们留在原地等重试成功，
+    /// 这样重试成功后整条启动链路会自动继续，不需要谁去重新驱动。
     /// </summary>
     private void FailAndNotify(string message)
     {
+        hasFailed = true;
+        lastError = message;
+
         SetProgress(slider != null ? slider.value : 0f, message);
+        SetProgressUIVisible(true);   // 失败原因必须留在屏幕上，别被上一次成功时的隐藏盖掉
+        SetRetryVisible(true);
+
+        Debug.LogError("[热更] " + message);
         downloadOnFailed?.Invoke(message);
+    }
+
+    private void SetProgressUIVisible(bool visible)
+    {
+        if (slider != null) { slider.gameObject.SetActive(visible); }
+        if (text != null) { text.gameObject.SetActive(visible); }
+    }
+
+    /// <summary>
+    /// 重试按钮单独控制，不并进 SetProgressUIVisible：
+    /// 否则"开始下载时显示进度"会顺带把失败时该藏起来的重试按钮一起点亮。
+    /// </summary>
+    private void SetRetryVisible(bool visible)
+    {
+        if (retryButton != null) { retryButton.gameObject.SetActive(visible); }
     }
 
     private void HideProgressUI()
     {
-        if (slider != null) { slider.gameObject.SetActive(false); }
-        if (text != null) { text.gameObject.SetActive(false); }
+        SetProgressUIVisible(false);
+        SetRetryVisible(false);
     }
 
     /// <summary>
@@ -468,5 +527,8 @@ public class Downloader : Singleton<Downloader>
 
         isReady = false;
         isBundlesLoaded = false;
+        isDownloading = false;
+        hasFailed = false;
+        lastError = null;
     }
 }

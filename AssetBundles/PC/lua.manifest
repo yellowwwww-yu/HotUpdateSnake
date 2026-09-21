@@ -1,20 +1,22 @@
 ManifestFileVersion: 0
-CRC: 2005123663
+CRC: 4095550594
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2282c0a5ce65b6940e0b9034a733bc8c
+    Hash: 0b3b9c45b81ccc47c8cf941793efa18b
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 2282c0a5ce65b6940e0b9034a733bc8c
+    Hash: 0b3b9c45b81ccc47c8cf941793efa18b
 HashAppended: 0
 ClassTypes:
 - Class: 49
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
+- Assets/LuaScripts/LuaText/SnakeDemo.lua.txt
+- Assets/LuaScripts/LuaText/Snake.lua.txt
 - Assets/LuaScripts/LuaText/Main.lua.txt
 Dependencies: []

@@ -50,9 +50,25 @@ public class LuaManager : Singleton<LuaManager>
         return null;
     }
 
-    public void DoFile(string fileName)
+    /// <summary>
+    /// 执行一个 Lua 模块。
+    /// forceReload = true 时先清 package.loaded 缓存再 require —— require 命中缓存会直接返回，
+    /// 不重新执行 chunk，重进场景时表现就是"写了 DoFile 却什么都没发生"。
+    /// </summary>
+    public void DoFile(string fileName, bool forceReload = false)
     {
+        if (forceReload)
+        {
+            ClearModule(fileName);
+        }
+
         luaEnv.DoString($"require('{fileName}')");
+    }
+
+    /// <summary>清掉某个 Lua 模块的缓存。必须在它所在 AB 包卸载之前调用。</summary>
+    public void ClearModule(string fileName)
+    {
+        luaEnv.DoString($"package.loaded['{fileName}'] = nil");
     }
 
     public LuaFunction GetLuaFunction(string funcName)
