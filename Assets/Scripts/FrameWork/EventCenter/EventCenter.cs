@@ -5,24 +5,12 @@ using UnityEngine;
 namespace Framework
 {
     /// <summary>
-    /// 全局事件中心（观察者模式 / 发布-订阅中心）
+    /// 全局事件中心，订阅、取消订阅、触发都通过事件名来走。
+    /// 事件名用字符串，建议集中定义在一个 EventName 类里，避免手写拼错。
     ///
-    /// 用法示例：
-    /// <code>
-    /// // 订阅（比如在 MonoBehaviour 的 OnEnable 中）
-    /// EventCenter.Subscribe("PlayerDead", OnPlayerDead);
-    /// EventCenter.Subscribe<int>("ScoreChange", OnScoreChange);
-    ///
-    /// // 触发（任意地方）
-    /// EventCenter.Trigger("PlayerDead");
-    /// EventCenter.Trigger("ScoreChange", 100);
-    ///
-    /// // 取消订阅（记得在 OnDisable / OnDestroy 中调用，防止空引用）
-    /// EventCenter.Unsubscribe("PlayerDead", OnPlayerDead);
-    /// EventCenter.Unsubscribe("ScoreChange", OnScoreChange);
-    /// </code>
-    ///
-    /// 事件名建议集中定义在 EventName.cs 中，避免手写字符串出错。
+    ///   EventCenter.Subscribe("PlayerDead", OnPlayerDead);
+    ///   EventCenter.Trigger("PlayerDead");
+    ///   EventCenter.Unsubscribe("PlayerDead", OnPlayerDead);   // 记得在 OnDisable 里退订
     /// </summary>
     public static class EventCenter
     {

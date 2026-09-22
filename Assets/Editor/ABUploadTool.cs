@@ -5,8 +5,7 @@ using UnityEngine;
 
 /// <summary>
 /// 把打包好的 AssetBundle 文件夹整个拷到本地服务器目录。
-/// 路径写死，菜单点一下就拷，没有窗口。
-/// 放置位置：Assets/Editor/ABUploadTool.cs
+/// 路径写死，菜单点一下就拷，不做窗口。
 /// </summary>
 public static class ABUploadTool
 {

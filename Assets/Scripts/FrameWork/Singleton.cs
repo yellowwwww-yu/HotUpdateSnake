@@ -1,28 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// MonoBehaviour 单例基类。子类通过 Instance 访问，场景里出现第二个实例时只保留先到的那个。
+/// </summary>
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T instance;
-    public static T Instance=>instance;
+
+    public static T Instance => instance;
 
     protected virtual void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this as T;
         }
-        
-        if(instance != this)
+
+        // 场景里挂了第二个：销毁它，保证 Instance 只有一个
+        if (instance != this)
         {
             Destroy(gameObject);
         }
     }
 
     /// <summary>
-    /// 自身销毁时清空静态引用，防止后续 Instance 拿到"已销毁但非空"的悬挂对象。
-    /// 子类若重写 OnDestroy，必须 override 并调用 base.OnDestroy()。
+    /// 自身销毁时清掉静态引用，避免后面拿到已经销毁的对象。
+    /// 子类如果重写 OnDestroy，需要调用 base.OnDestroy()。
     /// </summary>
     protected virtual void OnDestroy()
     {

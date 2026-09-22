@@ -1,17 +1,18 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
 using XLua;
 
+/// <summary>
+/// Lua ç¯å¢ƒç®¡ç†ï¼šåˆ›å»º LuaEnvã€æ¥ç®¡ require çš„æ–‡ä»¶è¯»å–ã€å¯¹å¤–æä¾›æ‰§è¡Œæ¨¡å—çš„æ¥å£ã€‚
+/// </summary>
 public class LuaManager : Singleton<LuaManager>
 {
-    /// <summary>Lua ½Å±¾ÔÚ Assets ÏÂµÄ¸ùÄ¿Â¼ ¡ª¡ª AB ÄÚµÇ¼ÇµÄÈ«Â·¾¶ÒÔ´Ë¿ªÍ·</summary>
+    // Lua è„šæœ¬åœ¨ Assets ä¸‹çš„æ ¹è·¯å¾„ï¼ŒAB é‡Œç™»è®°çš„å®Œæ•´è·¯å¾„ä»¥å®ƒå¼€å¤´
     private const string LuaAssetRoot = "Assets/LuaScripts/LuaText/";
 
-    /// <summary>´ÅÅÌÉÏµÄ¸ùÄ¿Â¼£¨Local Ä£Ê½ÓÃ£©£¬Ïà¶Ô Application.dataPath</summary>
+    // ç£ç›˜ä¸Šçš„æ ¹è·¯å¾„ï¼ˆLocal æ¨¡å¼ç”¨ï¼‰ï¼Œç›¸å¯¹ Application.dataPath
     private const string LuaLocalRoot = "LuaScripts/LuaText";
 
     private enum LoadingMethod
@@ -20,106 +21,120 @@ public class LuaManager : Singleton<LuaManager>
         AssetBundle
     }
 
-    /// <summary>Lua ½Å±¾µÄ·Ö°üÂ·ÓÉ£ºÏà¶ÔÂ·¾¶ÃüÖĞ prefix µÄ½Å±¾È¥ bundle °üÀïÈ¡</summary>
-    [Serializable]
-    public class BundleRule
-    {
-        public string prefix;   // Èç UI
-        public string bundle;   // Èç ui_lua
-    }
-
+    // å­˜æ”¾å…¨éƒ¨ lua è„šæœ¬çš„ AB åŒ…å
     [SerializeField] private string bundleName = "lua";
 
-    [Header("·Ö°üÂ·ÓÉ£ºÃüÖĞ prefix µÄ½Å±¾È¥¶ÔÓ¦°üÈ¡£¬Î´ÃüÖĞ×ßÉÏÃæµÄ bundleName")]
-    [SerializeField] private BundleRule[] bundleRules;
-
     private LuaEnv luaEnv;
-    [SerializeField]private LoadingMethod loadMethod = LoadingMethod.AssetBundle;
+
+    [SerializeField] private LoadingMethod loadMethod = LoadingMethod.AssetBundle;
 
     protected override void Awake()
     {
         base.Awake();
-        
+
         luaEnv = new LuaEnv();
         luaEnv.AddLoader(MyLoader);
     }
 
+    // è‡ªå®šä¹‰åŠ è½½å™¨ï¼šLua ä¾§æ‰§è¡Œ require æ—¶å›è°ƒè¿™é‡Œå–è„šæœ¬å†…å®¹
     private byte[] MyLoader(ref string filePath)
     {
         // require('UI.LoginPanel') -> UI/LoginPanel.lua.txt
-        string relative = filePath.Replace(".","/") + ".lua.txt";
+        string relative = filePath.Replace(".", "/") + ".lua.txt";
 
-        if(loadMethod == LoadingMethod.Local)
+        if (loadMethod == LoadingMethod.Local)
         {
             string path = Path.Combine(Application.dataPath, LuaLocalRoot, relative);
             if (File.Exists(path))
             {
                 return File.ReadAllBytes(path);
             }
-            Debug.Log($"Î´ÔÚ±¾µØÕÒµ½ÎÄ¼ş{relative}");
+            Debug.Log($"æœªåœ¨æœ¬åœ°æ‰¾åˆ°æ–‡ä»¶{relative}");
             return null;
         }
 
-        // ´«È«Â·¾¶£ºAB ÀïµÇ¼ÇµÄ¾ÍÊÇÕâÌõĞòÁĞ»¯Â·¾¶£¬¾«È·ÃüÖĞ£¬
-        // ²»´æÔÚ"²»Í¬Ä¿Â¼ÏÂÓĞÍ¬ÃûÎÄ¼şÊ±¶ÌÃûÃüÖĞÆçÒå"µÄÎÊÌâ¡£
+        // ä¼ å®Œæ•´è·¯å¾„ï¼šAB é‡Œç™»è®°çš„å°±æ˜¯è¿™æ¡è·¯å¾„ï¼Œä¸ä¼šå‡ºç°åŒåæ–‡ä»¶å‘½ä¸­æ­§ä¹‰
         string assetPath = LuaAssetRoot + relative;
-        string bundle = ResolveBundle(relative);
 
-        TextAsset lua = Downloader.Instance.GetAsset<TextAsset>(bundle, assetPath);
-        if(lua != null)
+        TextAsset lua = Downloader.Instance.GetAsset<TextAsset>(bundleName, assetPath);
+        if (lua != null)
         {
             return Encoding.UTF8.GetBytes(lua.text);
         }
-        Debug.Log($"Î´ÔÚ{bundle}°üÖĞÕÒµ½{assetPath}");
+
+        Debug.Log($"æœªåœ¨{bundleName}åŒ…ä¸­æ‰¾åˆ°{assetPath}");
         return null;
     }
 
     /// <summary>
-    /// °´Ç°×º¾ö¶¨È¥ÄÄ¸ö AB °üÈ¡½Å±¾¡£Ã»Åä¹æÔò¡¢»òÃ»ÃüÖĞÈÎºÎ¹æÔòÊ±×ß³£×¤µÄ bundleName¡£
-    /// Àı£º¹æÔò {prefix = "UI", bundle = "ui_lua"}£¬Ôò require('UI.LoginPanel') È¥ ui_lua °üÕÒ¡£
+    /// require ä¸€ä¸ª Lua æ¨¡å—ï¼Œè¿”å›å®ƒçš„æ¨¡å—è¡¨ï¼Œå¤±è´¥è¿”å› nullã€‚
+    /// é¢æ¿ç­‰éœ€è¦é•¿æœŸæŒæœ‰æ¨¡å—è¡¨çš„åœºåˆç”¨å®ƒï¼›åªæ˜¯è·‘ä¸€éè„šæœ¬çš„è¯ç”¨ DoFile å°±è¡Œã€‚
     /// </summary>
-    private string ResolveBundle(string relative)
+    /// <param name="forceReload">true æ—¶å…ˆæ¸… package.loaded ç¼“å­˜ï¼Œå¼ºåˆ¶é‡æ–°æ‰§è¡Œ chunk</param>
+    public LuaTable RequireModule(string moduleName, bool forceReload = false)
     {
-        if (bundleRules != null)
+        if (string.IsNullOrEmpty(moduleName))
         {
-            foreach (BundleRule rule in bundleRules)
-            {
-                if (relative.StartsWith(rule.prefix + "/"))
-                {
-                    return rule.bundle;
-                }
-            }
+            return null;
         }
 
-        return bundleName;
+        if (luaEnv == null)
+        {
+            Debug.LogError($"luaEnv ä¸å­˜åœ¨ï¼Œæ— æ³• require {moduleName}");
+            return null;
+        }
+
+        if (forceReload)
+        {
+            ClearModule(moduleName);
+        }
+
+        try
+        {
+            object[] results = luaEnv.DoString($"return require('{moduleName}')");
+            if (results == null || results.Length == 0)
+            {
+                return null;
+            }
+
+            return results[0] as LuaTable;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"require('{moduleName}') æ‰§è¡Œå¤±è´¥ï¼š{e.Message}");
+            return null;
+        }
     }
 
     /// <summary>
-    /// Ö´ĞĞÒ»¸ö Lua Ä£¿é¡£
-    /// forceReload = true Ê±ÏÈÇå package.loaded »º´æÔÙ require ¡ª¡ª require ÃüÖĞ»º´æ»áÖ±½Ó·µ»Ø£¬
-    /// ²»ÖØĞÂÖ´ĞĞ chunk£¬ÖØ½ø³¡¾°Ê±±íÏÖ¾ÍÊÇ"Ğ´ÁË DoFile È´Ê²Ã´¶¼Ã»·¢Éú"¡£
+    /// æ‰§è¡Œä¸€ä¸ª Lua æ¨¡å—ï¼Œä¸ä¿ç•™æ¨¡å—è¡¨ã€‚
+    /// forceReload ç”¨äºé‡å¤è¿›åœºæ™¯ï¼šrequire å‘½ä¸­ package.loaded ä¼šç›´æ¥è¿”å›ï¼Œ
+    /// ä¸æ¸…ç¼“å­˜çš„è¯ç¬¬äºŒæ¬¡è¿›æ¥å°±ä»€ä¹ˆéƒ½æ²¡æ‰§è¡Œã€‚
     /// </summary>
     public void DoFile(string fileName, bool forceReload = false)
     {
-        if (forceReload)
-        {
-            ClearModule(fileName);
-        }
-
-        luaEnv.DoString($"require('{fileName}')");
+        LuaTable module = RequireModule(fileName, forceReload);
+        module?.Dispose();
     }
 
-    /// <summary>ÇåµôÄ³¸ö Lua Ä£¿éµÄ»º´æ¡£±ØĞëÔÚËüËùÔÚ AB °üĞ¶ÔØÖ®Ç°µ÷ÓÃ¡£</summary>
+    /// <summary>æ¸…æ‰æŸä¸ª Lua æ¨¡å—çš„ç¼“å­˜ï¼Œéœ€è¦åœ¨å®ƒæ‰€åœ¨çš„ AB åŒ…å¸è½½ä¹‹å‰è°ƒç”¨ã€‚</summary>
     public void ClearModule(string fileName)
     {
+        if (luaEnv == null)
+        {
+            return;
+        }
+
         luaEnv.DoString($"package.loaded['{fileName}'] = nil");
     }
 
+    /// <summary>å–ä¸€ä¸ªå…¨å±€å‡½æ•°ï¼Œä¸€èˆ¬æ˜¯ Lua ä¾§æ³¨å†Œçš„ Main / Game_Start è¿™ç±»å…¥å£ã€‚</summary>
     public LuaFunction GetLuaFunction(string funcName)
     {
         return luaEnv.Global.Get<LuaFunction>(funcName);
     }
 
+    /// <summary>æŠŠ C# å¯¹è±¡æ³¨å…¥æˆ Lua å…¨å±€å˜é‡ï¼ŒLua é‡Œç›´æ¥ç”¨è¿™ä¸ªåå­—è®¿é—®ã€‚</summary>
     public void Inject<T>(string name, T obj)
     {
         luaEnv.Global.Set(name, obj);
@@ -127,9 +142,9 @@ public class LuaManager : Singleton<LuaManager>
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();   // Çå Singleton.instance
+        base.OnDestroy();   // æ¸…æ‰ Singleton é‡Œçš„é™æ€å¼•ç”¨
         luaEnv?.Dispose();
         luaEnv = null;
-        // lua Êô³£×¤°ü£º¼ÓÔØÓëÊÍ·ÅÍ³Ò»ÓÉ CommonBundleLoader ¸ºÔğ£¬ÕâÀï²»ÔÙÔ½È¨ UnloadAB
+        // lua æ˜¯å¸¸é©»åŒ…ï¼ŒåŠ è½½å’Œé‡Šæ”¾ç»Ÿä¸€ç”± CommonBundleLoader è´Ÿè´£ï¼Œè¿™é‡Œä¸åš UnloadAB
     }
 }

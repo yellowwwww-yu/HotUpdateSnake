@@ -4,28 +4,28 @@ using UnityEngine;
 using XLua;
 
 /// <summary>
-/// Ò»ÌõÉßµÄ±íÏÖ²ã£º°Ñ Lua ËãºÃµÄ¡¸Í·Î»ÖÃ + ³¯Ïò + ¼ä¾à + ½ÚµãÊı¡¹±ä³ÉÊµ¼ÊµÄÒ»´®½Úµã¡£
+/// ä¸€æ¡è›‡çš„è¡¨ç°å±‚ï¼šæŠŠ Lua ç®—å¥½çš„ã€Œå¤´ä½ç½® + æœå‘ + é—´è· + èŠ‚ç‚¹æ•°ã€å˜æˆå®é™…çš„ä¸€ä¸²èŠ‚ç‚¹ã€‚
 ///
-/// ·Ö¹¤£º
-///   Lua ¹Ü¹æÔòÓë×´Ì¬ ¡ª¡ª ×ªÏò¡¢Ç°½ø¡¢³¤¶È£¬Ã¿Ö¡°Ñ½á¹ûÍÆ½ø SetState
-///   C#  ¹Ü¹ì¼£ÓëäÖÈ¾ ¡ª¡ª °´ÀÛ»ıÂ·³Ì¼Ç¹ì¼£¡¢Öğ½Úµã¸úËæ£¬´¿°áÔË£¬²»ÈÏÊ¶ÈÎºÎÓÎÏ·¹æÔò
+/// åˆ†å·¥ï¼š
+///   Lua ç®¡è§„åˆ™ä¸çŠ¶æ€ â€”â€” è½¬å‘ã€å‰è¿›ã€é•¿åº¦ï¼Œæ¯å¸§æŠŠç»“æœæ¨è¿› SetState
+///   C#  ç®¡è½¨è¿¹ä¸æ¸²æŸ“ â€”â€” æŒ‰ç´¯ç§¯è·¯ç¨‹è®°è½¨è¿¹ã€é€èŠ‚ç‚¹è·Ÿéšï¼Œçº¯æ¬è¿ï¼Œä¸è®¤è¯†ä»»ä½•æ¸¸æˆè§„åˆ™
 ///
-/// ½Úµã¸úËæ²»·Å Lua£º½ÚµãÊı ¡Á Ã¿Ö¡¿çÓïÑÔµ÷ÓÃÊÇÈÈµã£¬¶øÇÒÕâÊÇ´¿ÊıÑ§£¬ÁôÔÚ C# ¸ü¿ì¸üÎÈ¡£
+/// èŠ‚ç‚¹è·Ÿéšä¸æ”¾ Luaï¼šèŠ‚ç‚¹æ•° Ã— æ¯å¸§è·¨è¯­è¨€è°ƒç”¨æ˜¯çƒ­ç‚¹ï¼Œè€Œä¸”è¿™æ˜¯çº¯æ•°å­¦ï¼Œç•™åœ¨ C# æ›´å¿«æ›´ç¨³ã€‚
 /// </summary>
 public class SnakeView : MonoBehaviour
 {
     private float totalDis = 0;
     private Vector2 headPos = Vector2.zero;
-    private float headAngle = 0;              // »¡¶È£¬0 = +X£¬Óë Lua ²àÒ»ÖÂ
+    private float headAngle = 0;              // å¼§åº¦ï¼Œ0 = +Xï¼Œä¸ Lua ä¾§ä¸€è‡´
 
     private Vector2 lastPos = Vector2.zero;
     private int trailStart = 0;
     private float needDis = 0;
-    private int nodeCount = 1;                // ½Úµã×ÜÊı£¨º¬ÉßÍ·£©£¬Ö»ÓÉ Lua ´«
+    private int nodeCount = 1;                // èŠ‚ç‚¹æ€»æ•°ï¼ˆå«è›‡å¤´ï¼‰ï¼Œåªç”± Lua ä¼ 
     private int activeNodeCount = 1;
     private float spacing = 0.22f;
 
-    private bool hasState;                    // ÊÕµ½µÚÒ»Ö¡×´Ì¬Ç°²»¼Ç¹ì¼£
+    private bool hasState;                    // æ”¶åˆ°ç¬¬ä¸€å¸§çŠ¶æ€å‰ä¸è®°è½¨è¿¹
     private bool warnedMissingPrefab;
 
     private GameObject headPrefab;
@@ -39,7 +39,7 @@ public class SnakeView : MonoBehaviour
     }
 
     List<TrailPoint> trails = new List<TrailPoint>(256);
-    List<Transform> nodes = new List<Transform>();   // Ö»×°ÉíÌå£¬ÉßÍ·ÊÇµ¥¶ÀÒ»¸öÎïÌå
+    List<Transform> nodes = new List<Transform>();   // åªè£…èº«ä½“ï¼Œè›‡å¤´æ˜¯å•ç‹¬ä¸€ä¸ªç‰©ä½“
 
     private LuaFunction luaStart;
     private LuaFunction luaUpdate;
@@ -49,19 +49,19 @@ public class SnakeView : MonoBehaviour
 
     [SerializeField] private SceneBundleLoader sceneBundleLoader;
 
-    // ==================== ¸ø Lua µ÷ÓÃµÄ½Ó¿Ú ====================
+    // ==================== ç»™ Lua è°ƒç”¨çš„æ¥å£ ====================
 
     /// <summary>
-    /// ÓÉ Lua Ã¿Ö¡µ÷ÓÃ£¨Ò²ÊÇÎ¨Ò»µÄÈë¿Ú£©¡£
-    /// ²ÎÊıË³Ğò (x, y, spacing, nodeCount, angle) ±ØĞëºÍ Lua ²àÒ»ÖÂ¡£
-    /// ÕâÀïÖ»»º´æ£¬ÕæÕıÂäµØÔÚ LateUpdate¡£
+    /// ç”± Lua æ¯å¸§è°ƒç”¨ï¼ˆä¹Ÿæ˜¯å”¯ä¸€çš„å…¥å£ï¼‰ã€‚
+    /// å‚æ•°é¡ºåº (x, y, spacing, nodeCount, angle) å¿…é¡»å’Œ Lua ä¾§ä¸€è‡´ã€‚
+    /// è¿™é‡Œåªç¼“å­˜ï¼ŒçœŸæ­£è½åœ°åœ¨ LateUpdateã€‚
     /// </summary>
     public void SetState(float x, float y, float spacing, int nodeCount, float angle)
     {
         headPos = new Vector2(x, y);
         headAngle = angle;
 
-        this.spacing = Mathf.Max(0.01f, spacing);        // spacing Îª 0 / ¸ºÊı»á°ÑÀï³ÌËã±À
+        this.spacing = Mathf.Max(0.01f, spacing);        // spacing ä¸º 0 / è´Ÿæ•°ä¼šæŠŠé‡Œç¨‹ç®—å´©
         this.nodeCount = Mathf.Max(1, nodeCount);
         activeNodeCount = this.nodeCount;
 
@@ -69,7 +69,7 @@ public class SnakeView : MonoBehaviour
 
         if (!hasState)
         {
-            // µÚÒ»Ö¡£º¹ì¼£´Óµ±Ç°Î»ÖÃÆğËã£¬·ñÔò»á´ÓÊÀ½çÔ­µãÀ­³öÒ»Ìõ¼ÙÎ²°Í
+            // ç¬¬ä¸€å¸§ï¼šè½¨è¿¹ä»å½“å‰ä½ç½®èµ·ç®—ï¼Œå¦åˆ™ä¼šä»ä¸–ç•ŒåŸç‚¹æ‹‰å‡ºä¸€æ¡å‡å°¾å·´
             hasState = true;
             totalDis = 0;
             lastPos = headPos;
@@ -78,18 +78,18 @@ public class SnakeView : MonoBehaviour
             trails.Add(new TrailPoint { dis = 0, pos = headPos });
         }
 
-        // nodes Ö»×°ÉíÌå£¬ËùÒÔÊıÁ¿ºÍ½Úµã×ÜÊı²î 1
+        // nodes åªè£…èº«ä½“ï¼Œæ‰€ä»¥æ•°é‡å’ŒèŠ‚ç‚¹æ€»æ•°å·® 1
         if (activeNodeCount - 1 != nodes.Count)
         {
             CreateNodes(activeNodeCount - 1);
         }
     }
 
-    // ==================== Æô¶¯ ====================
+    // ==================== å¯åŠ¨ ====================
 
     private void Awake()
     {
-        // Ö»ÔÚÃ»ÍÏÒıÓÃÊ±²ÅÈ¥ÕÒ£¬±ğÎŞÌõ¼ş¸²¸Ç Inspector ÉÏµÄÅäÖÃ
+        // åªåœ¨æ²¡æ‹–å¼•ç”¨æ—¶æ‰å»æ‰¾ï¼Œåˆ«æ— æ¡ä»¶è¦†ç›– Inspector ä¸Šçš„é…ç½®
         if (sceneBundleLoader == null)
         {
             GameObject go = GameObject.Find("SceneBundleLoader");
@@ -101,7 +101,7 @@ public class SnakeView : MonoBehaviour
 
         if (sceneBundleLoader == null)
         {
-            Debug.LogError("SnakeView ÕÒ²»µ½ SceneBundleLoader£ºInspector Î´ÍÏÒıÓÃ£¬³¡¾°ÀïÒ²Ã»ÓĞÍ¬ÃûÎïÌå");
+            Debug.LogError("SnakeView æ‰¾ä¸åˆ° SceneBundleLoaderï¼šInspector æœªæ‹–å¼•ç”¨ï¼Œåœºæ™¯é‡Œä¹Ÿæ²¡æœ‰åŒåç‰©ä½“");
         }
     }
 
@@ -114,8 +114,8 @@ public class SnakeView : MonoBehaviour
 
         sceneBundleLoader.onReady += LuaStart;
 
-        // SceneBundleLoader.Start ÔÚÒÀÀµÒÑ¾ÍĞ÷Ê±»áÌø¹ı yield¡¢Í¬Ö¡Í¬²½ Invoke¡£
-        // Unity ²»±£Ö¤Á½¸öÎïÌåµÄ Start Ë³Ğò£¬ÅÅÔÚºóÃæ¾ÍÓÀÔ¶ÊÕ²»µ½»Øµ÷ ¡ª¡ª ×Ô¼º²¹Ò»´Î¡£
+        // SceneBundleLoader.Start åœ¨ä¾èµ–å·²å°±ç»ªæ—¶ä¼šè·³è¿‡ yieldã€åŒå¸§åŒæ­¥ Invokeã€‚
+        // Unity ä¸ä¿è¯ä¸¤ä¸ªç‰©ä½“çš„ Start é¡ºåºï¼Œæ’åœ¨åé¢å°±æ°¸è¿œæ”¶ä¸åˆ°å›è°ƒ â€”â€” è‡ªå·±è¡¥ä¸€æ¬¡ã€‚
         if (sceneBundleLoader.IsReady)
         {
             LuaStart();
@@ -132,16 +132,16 @@ public class SnakeView : MonoBehaviour
 
         if (LuaManager.Instance == null)
         {
-            Debug.LogError("LuaManager ²»´æÔÚ£¬SnakeView ÎŞ·¨Æô¶¯");
+            Debug.LogError("LuaManager ä¸å­˜åœ¨ï¼ŒSnakeView æ— æ³•å¯åŠ¨");
             return;
         }
 
         LuaManager.Instance.Inject("SnakeView", this);
 
-        // forceReload£ºrequire ÓĞ package.loaded »º´æ£¬²»ÇåµÄ»°µÚ¶ş´Î½ø³¡¾° chunk ²»»áÖØĞÂÖ´ĞĞ
+        // forceReloadï¼šrequire æœ‰ package.loaded ç¼“å­˜ï¼Œä¸æ¸…çš„è¯ç¬¬äºŒæ¬¡è¿›åœºæ™¯ chunk ä¸ä¼šé‡æ–°æ‰§è¡Œ
         LuaManager.Instance.DoFile("Game.SnakeDemo", true);
 
-        // ±ØĞëÏÈÓÚ Call()£ºLua ½¨ÉßÊ±»áµ÷ CreateNodes£¬ÄÇÊ± headPrefab / bodyPrefab µÃÒÑ¾­ÄÃµ½
+        // å¿…é¡»å…ˆäº Call()ï¼šLua å»ºè›‡æ—¶ä¼šè°ƒ CreateNodesï¼Œé‚£æ—¶ headPrefab / bodyPrefab å¾—å·²ç»æ‹¿åˆ°
         Init();
 
         luaStart = LuaManager.Instance.GetLuaFunction("Snake_Start");
@@ -150,7 +150,7 @@ public class SnakeView : MonoBehaviour
 
         if (luaStart == null)
         {
-            Debug.LogError("SnakeDemo.lua ÀïÃ»ÕÒµ½ Snake_Start");
+            Debug.LogError("SnakeDemo.lua é‡Œæ²¡æ‰¾åˆ° Snake_Start");
             return;
         }
 
@@ -164,7 +164,7 @@ public class SnakeView : MonoBehaviour
 
         if (headPrefab == null || bodyPrefab == null)
         {
-            Debug.LogError("prefab °üÀïµÄ headPrefab / bodyPrefab È¡²»µ½£ºÈ·ÈÏ±¾³¡¾°µÄ SceneBundleLoader ÒÑ¼ÓÔØ prefab °ü");
+            Debug.LogError("prefab åŒ…é‡Œçš„ headPrefab / bodyPrefab å–ä¸åˆ°ï¼šç¡®è®¤æœ¬åœºæ™¯çš„ SceneBundleLoader å·²åŠ è½½ prefab åŒ…");
             return;
         }
 
@@ -185,7 +185,7 @@ public class SnakeView : MonoBehaviour
         luaUpdate.Call(Time.deltaTime);
     }
 
-    /// <summary>ÑİÊ¾ÓÃÊäÈë£ºÊó±êÖ¸Ïò¾ÍÊÇÄ¿±ê³¯Ïò¡£½ÓÕæÍæ·¨Ê±»»³ÉÒ¡¸Ë»òÍøÂçÖ¡¡£</summary>
+    /// <summary>æ¼”ç¤ºç”¨è¾“å…¥ï¼šé¼ æ ‡æŒ‡å‘å°±æ˜¯ç›®æ ‡æœå‘ã€‚æ¥çœŸç©æ³•æ—¶æ¢æˆæ‘‡æ†æˆ–ç½‘ç»œå¸§ã€‚</summary>
     private void FeedInput()
     {
         if (luaInput == null || Camera.main == null)
@@ -201,10 +201,10 @@ public class SnakeView : MonoBehaviour
             return;
         }
 
-        luaInput.Call(Mathf.Atan2(dir.y, dir.x));   // »¡¶È£¬ºÍ Lua ²àÒ»ÖÂ
+        luaInput.Call(Mathf.Atan2(dir.y, dir.x));   // å¼§åº¦ï¼Œå’Œ Lua ä¾§ä¸€è‡´
     }
 
-    // ==================== ±íÏÖ²ãÄÚ²¿ ====================
+    // ==================== è¡¨ç°å±‚å†…éƒ¨ ====================
 
     private void LateUpdate()
     {
@@ -213,7 +213,7 @@ public class SnakeView : MonoBehaviour
             return;
         }
 
-        // ¢Ù °´Êµ¼Ê×ß¹ıµÄ¾àÀëÍÆ½ø¹ì¼££¬ÓëÖ¡ÂÊ¡¢ËÙ¶ÈÎŞ¹Ø
+        // â‘  æŒ‰å®é™…èµ°è¿‡çš„è·ç¦»æ¨è¿›è½¨è¿¹ï¼Œä¸å¸§ç‡ã€é€Ÿåº¦æ— å…³
         float moved = Vector2.Distance(lastPos, headPos);
         if (moved > 0)
         {
@@ -223,20 +223,20 @@ public class SnakeView : MonoBehaviour
             TrimTrail();
         }
 
-        // ¢Ú ÉßÍ·²»ÔÚ nodes Àï£¬µÃµ¥¶À°Ú
+        // â‘¡ è›‡å¤´ä¸åœ¨ nodes é‡Œï¼Œå¾—å•ç‹¬æ‘†
         if (headTransform != null)
         {
             headTransform.position = headPos;
             headTransform.rotation = Quaternion.Euler(0, 0, headAngle * Mathf.Rad2Deg);
         }
 
-        // ¢Û °ÚÉíÌå£º±ØĞëÔÚÍ·µÄÎ»ÖÃËãÍêÖ®ºó£¬·ñÔòÉíÌåºãÂıÒ»Ö¡
+        // â‘¢ æ‘†èº«ä½“ï¼šå¿…é¡»åœ¨å¤´çš„ä½ç½®ç®—å®Œä¹‹åï¼Œå¦åˆ™èº«ä½“æ’æ…¢ä¸€å¸§
         SetNodesPos();
     }
 
     /// <summary>
-    /// ²Ã¼ô¹ì¼£¡£Ö»±£Áô¡¸½ÚµãÊı + 1¡¹±¶¼ä¾àÔÙ¼ÓÒ»µãÓàÁ¿£¬¸üÔçµÄµãÖ±½ÓÅĞËÀ¡£
-    /// Âß¼­Æğ¼ûµãÓÒÒÆÊÇÒ»´ÎÕûÊı¼Ó·¨£»ÔÜ¹» 256 ¸öËÀÊı¾İ²ÅÕæÕı»ØÊÕÄÚ´æ£¬±ÜÃâÃ¿Ö¡ O(n) °áÒÆ¡£
+    /// è£å‰ªè½¨è¿¹ï¼Œåªä¿ç•™"èŠ‚ç‚¹æ•° + 1 å€é—´è·å†åŠ ä¸€ç‚¹ä½™é‡"è¿™ä¹ˆé•¿çš„ä¸€æ®µï¼Œæ›´æ—©çš„ç‚¹ä¸å†ä½¿ç”¨ã€‚
+    /// æ¨è¿›èµ·ç‚¹åªæ˜¯ä¸€æ¬¡æ•´æ•°åŠ æ³•ï¼Œæ”’å¤Ÿ 256 ä¸ªæ‰çœŸæ­£å›æ”¶å†…å­˜ï¼Œé¿å…æ¯å¸§æ¬æ•°ç»„ã€‚
     /// </summary>
     private void TrimTrail()
     {
@@ -261,16 +261,16 @@ public class SnakeView : MonoBehaviour
 
         int bodyCount = Mathf.Min(activeNodeCount - 1, nodes.Count);
 
-        // ½Úµã°´Ë³ĞòÒÀ´ÎÍùºó£¬Ä¿±êÀï³Ìµ¥µ÷µİ¼õ£¬ËùÒÔÓÎ±êÖ»ÔÚÑ­»·Íâ³õÊ¼»¯Ò»´Î£¬
-        // ÕûÌåÊÇ O(¹ì¼£µãÊı + ½ÚµãÊı)
+        // èŠ‚ç‚¹æŒ‰é¡ºåºä¾æ¬¡å¾€åï¼Œç›®æ ‡é‡Œç¨‹å•è°ƒé€’å‡ï¼Œæ‰€ä»¥æ¸¸æ ‡åªåœ¨å¾ªç¯å¤–åˆå§‹åŒ–ä¸€æ¬¡ï¼Œ
+        // æ•´ä½“æ˜¯ O(è½¨è¿¹ç‚¹æ•° + èŠ‚ç‚¹æ•°)
         int p = trails.Count - 1;
 
         for (int i = 0; i < bodyCount; i++)
         {
-            // µÚ i ¸öÉíÌå½Úµã£¨ÉßÍ·ÊÇ 0 ºÅ£©Õ¾ÔÚÀëÍ· (i+1) ¸ö¼ä¾àµÄÀï³ÌµãÉÏ
+            // ç¬¬ i ä¸ªèº«ä½“èŠ‚ç‚¹ï¼ˆè›‡å¤´æ˜¯ 0 å·ï¼‰ç«™åœ¨ç¦»å¤´ (i+1) ä¸ªé—´è·çš„é‡Œç¨‹ç‚¹ä¸Š
             float target = totalDis - (i + 1) * spacing;
 
-            // Í·»¹Ã»×ß³öÕâÃ´Ô¶£¨¿ª¾Ö½×¶Î£©£ºÑ¹ÔÚ¹ì¼£×îÔçµÄ±£ÁôµãÉÏ£¬ÉßÊÇ"´ÓÆğµã³¤³öÀ´"µÄ
+            // å¤´è¿˜æ²¡èµ°å‡ºè¿™ä¹ˆè¿œï¼ˆå¼€å±€é˜¶æ®µï¼‰ï¼šå‹åœ¨è½¨è¿¹æœ€æ—©çš„ä¿ç•™ç‚¹ä¸Šï¼Œè›‡æ˜¯"ä»èµ·ç‚¹é•¿å‡ºæ¥"çš„
             if (target <= trails[trailStart].dis)
             {
                 nodes[i].position = trails[trailStart].pos;
@@ -282,7 +282,7 @@ public class SnakeView : MonoBehaviour
                 p--;
             }
 
-            // ¶µµ×£º±£Ö¤ p+1 ºÏ·¨£¨spacing Òì³£Ê±¿ÉÄÜÒ»´Î¶¼Ã»»ØÍË£©
+            // å…œåº•ï¼šä¿è¯ p+1 åˆæ³•ï¼ˆspacing å¼‚å¸¸æ—¶å¯èƒ½ä¸€æ¬¡éƒ½æ²¡å›é€€ï¼‰
             if (p > trails.Count - 2)
             {
                 p = trails.Count - 2;
@@ -291,7 +291,7 @@ public class SnakeView : MonoBehaviour
             float disDiff = trails[p + 1].dis - trails[p].dis;
             if (disDiff < 0.0001f)
             {
-                // Á½µã¼¸ºõÖØºÏ£¬Ö±½ÓÈ¡Ç°Õß£¬·À³ıÁã / NaN
+                // ä¸¤ç‚¹å‡ ä¹é‡åˆï¼Œç›´æ¥å–å‰è€…ï¼Œé˜²é™¤é›¶ / NaN
                 nodes[i].position = trails[p].pos;
             }
             else
@@ -302,7 +302,7 @@ public class SnakeView : MonoBehaviour
         }
     }
 
-    /// <summary>bodyCount ÊÇÉíÌå½ÚµãÊı£¨²»º¬ÉßÍ·£©¡£</summary>
+    /// <summary>bodyCount æ˜¯èº«ä½“èŠ‚ç‚¹æ•°ï¼ˆä¸å«è›‡å¤´ï¼‰ã€‚</summary>
     private void CreateNodes(int bodyCount)
     {
         bodyCount = Mathf.Max(0, bodyCount);
@@ -311,7 +311,7 @@ public class SnakeView : MonoBehaviour
         {
             if (bodyPrefab == null)
             {
-                Debug.LogError("bodyPrefab Îª¿Õ£¬ÎŞ·¨´´½¨ÉßÉí½Úµã£¨Init Î´Ö´ĞĞ»ò prefab °üÎ´¼ÓÔØ£©");
+                Debug.LogError("bodyPrefab ä¸ºç©ºï¼Œæ— æ³•åˆ›å»ºè›‡èº«èŠ‚ç‚¹ï¼ˆInit æœªæ‰§è¡Œæˆ– prefab åŒ…æœªåŠ è½½ï¼‰");
                 return;
             }
 
@@ -320,13 +320,13 @@ public class SnakeView : MonoBehaviour
             {
                 GameObject body = GameObject.Instantiate(bodyPrefab, transform, false);
 
-                // ÁĞ±íÎª¿ÕÊ±Ã»ÓĞ"ÉÏÒ»½Ú"¿É²Î¿¼£¬¾ÍÓÃÉßÍ·µ±Ç°Î»ÖÃÆğ²½
+                // åˆ—è¡¨ä¸ºç©ºæ—¶æ²¡æœ‰"ä¸Šä¸€èŠ‚"å¯å‚è€ƒï¼Œå°±ç”¨è›‡å¤´å½“å‰ä½ç½®èµ·æ­¥
                 body.transform.position = nodes.Count > 0 ? nodes[nodes.Count - 1].position : headPos;
 
                 SpriteRenderer sprite = body.GetComponentInChildren<SpriteRenderer>();
                 if (sprite != null)
                 {
-                    // ÓÃÕæÊµÏÂ±ê£¬Ô½¿¿ºóµÄÉíÌåÔ½µ×²ã£»ÕâÑùÉßÍ·´©¹ıÉíÌåÊ±²»»áºöÒşºöÏÖ
+                    // ç”¨çœŸå®ä¸‹æ ‡ï¼Œè¶Šé åçš„èº«ä½“è¶Šåº•å±‚ï¼›è¿™æ ·è›‡å¤´ç©¿è¿‡èº«ä½“æ—¶ä¸ä¼šå¿½éšå¿½ç°
                     sprite.sortingOrder = -(nodes.Count + 1);
                 }
 
@@ -351,18 +351,18 @@ public class SnakeView : MonoBehaviour
             sceneBundleLoader.onReady -= LuaStart;
         }
 
-        // LuaManager ¿ÉÄÜÒÑ¾­ÏÈÒ»²½Ïú»Ù£¨ÍË³ö²¥·Å / ÇĞ³¡¾° / ¹ØÓ¦ÓÃÊ±£¬Unity ²»±£Ö¤
-        // MonoBehaviour Ö®¼äµÄ OnDestroy Ë³Ğò£©¡£ËüÏú»ÙÊ± luaEnv ÒÑ±» Dispose¡¢rawL ¹éÁã£¬
-        // ÕâÊ±ÔÙÅö LuaFunction ¾Í»áÅ× InvalidOperationException: this lua env had disposed!¡£
-        // env Ïú»ÙÊ±ÒÑ°ÑËü³ÖÓĞµÄÈ«²¿ Lua ÒıÓÃÒ»²¢ÊÍ·Å£¬ËùÒÔÕâÀïÌø¹ıÊÇ°²È«µÄ£¬²»ÊÇĞ¹Â©¡£
+        // LuaManager å¯èƒ½å·²ç»å…ˆä¸€æ­¥é”€æ¯ï¼ˆé€€å‡ºæ’­æ”¾ / åˆ‡åœºæ™¯ / å…³åº”ç”¨æ—¶ï¼ŒUnity ä¸ä¿è¯
+        // MonoBehaviour ä¹‹é—´çš„ OnDestroy é¡ºåºï¼‰ã€‚å®ƒé”€æ¯æ—¶ luaEnv å·²è¢« Disposeã€rawL å½’é›¶ï¼Œ
+        // è¿™æ—¶å†ç¢° LuaFunction å°±ä¼šæŠ› InvalidOperationException: this lua env had disposed!ã€‚
+        // env é”€æ¯æ—¶å·²æŠŠå®ƒæŒæœ‰çš„å…¨éƒ¨ Lua å¼•ç”¨ä¸€å¹¶é‡Šæ”¾ï¼Œæ‰€ä»¥è¿™é‡Œè·³è¿‡æ˜¯å®‰å…¨çš„ï¼Œä¸æ˜¯æ³„æ¼ã€‚
         if (LuaManager.Instance != null)
         {
             luaStart?.Dispose();
             luaUpdate?.Dispose();
             luaInput?.Dispose();
 
-            // Çåµô Lua Ä£¿é»º´æ£¬ÏÂ´Î½ø±¾³¡¾° DoFile ²Å»áÖØĞÂÖ´ĞĞ chunk
-            LuaManager.Instance.ClearModule("SnakeDemo");
+            // æ¸…æ‰ Lua æ¨¡å—ç¼“å­˜ï¼Œä¸‹æ¬¡è¿›æœ¬åœºæ™¯ DoFile æ‰ä¼šé‡æ–°æ‰§è¡Œ chunk
+            LuaManager.Instance.ClearModule("Game.SnakeDemo");
         }
 
         luaStart = luaUpdate = luaInput = null;

@@ -8,25 +8,21 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 /// <summary>
-/// 热更新下载与资源加载核心（单例，挂在常驻功能场景）。
+/// 热更新下载与资源加载核心，单例，挂在常驻功能场景上。
 ///
-/// 三个阶段 + 两类信号：
-///   下载阶段：远程清单 → 对比本地缓存 → 差异下载(自动重试) → 主包依赖表就绪
-///             完成后置 isReady = true 并广播 downloadOnComplete（语义：包文件已全在磁盘）
-///   加载阶段：CommonBundleLoader 加载常驻包、SceneBundleLoader 加载场景包，都走 LoadBundle 记账
-///   就绪信号：常驻包加载完成后 CommonBundleLoader 调 NotifyBundlesLoaded()
-///             业务等 onBundlesLoaded / isBundlesLoaded 再 DoFile、GetAsset —— 时序从此显式
+/// 先下载后加载：
+///   拉远程清单 → 和本地缓存对比 → 下载差异包 → 读主包里的依赖表 → isReady = true
+///   之后 CommonBundleLoader 加载常驻包、SceneBundleLoader 加载场景包，都走 LoadBundle 记账
+///   常驻包加载完由 CommonBundleLoader 调 NotifyBundlesLoaded，业务这时才能取资源
 ///
-/// 事件语义（已收紧，别混用）：
-///   downloadOnComplete : 下载完成（磁盘就绪，不代表已加载）
-///   downloadOnFailed   : 仅下载阶段失败（运行期加载失败不再走这个事件）
-///   onBundlesLoaded    : 常驻包已加载，可以安全取资源
+/// 三个信号不要混用：
+///   downloadOnComplete  下载完成，包已经落到磁盘（不代表已加载）
+///   downloadOnFailed    只在下载阶段失败时触发，运行期加载失败不走它
+///   onBundlesLoaded     常驻包已加载，可以安全 DoFile / GetAsset
 ///
-/// 失败闭环：
-///   所有失败路径都收敛到 FailAndNotify —— 置 hasFailed / lastError、进度 UI 换成错误原因、
-///   亮出重试按钮（Awake 里代码绑定 onClick → StartDownload），并广播 downloadOnFailed。
-///   等待者（两个 Loader、LuaEnter）失败时【不退出循环】，而是留在原地等：
-///   重试成功后 isReady 翻转，它们会自然继续，因此不存在"重试成功了但没人重新驱动"的缺口。
+/// 下载失败统一走 FailAndNotify：记下原因、把进度 UI 换成错误提示、亮出重试按钮。
+/// 等着下载完成的 Loader 失败时不退出循环，留在原地等重试成功，
+/// 这样重试之后整条链路会自己继续，不需要谁去重新驱动。
 /// </summary>
 public class Downloader : Singleton<Downloader>
 {
@@ -40,14 +36,14 @@ public class Downloader : Singleton<Downloader>
     private string localManifestPath;
     private string masterBundleName = "PC";
 
-    private AssetBundleManifest unityManifest;   // 依赖关系表（读自主包）
-    private AssetBundle masterBundle;            // 主包本体：只供读依赖表，不入引用计数，退出时才释放
-    private bool isDownloading;                  // 防重复触发下载
+    private AssetBundleManifest unityManifest;   // 依赖关系表，从主包里读
+    private AssetBundle masterBundle;            // 主包本体，只用来读依赖表，不进引用计数
+    private bool isDownloading;                  // 防止重复触发下载
 
-    /// <summary>下载阶段是否完成（包文件已全部在磁盘），Loader 等这个再开始加载。</summary>
+    /// <summary>下载阶段是否完成（包文件都在磁盘上了），Loader 等这个再开始加载</summary>
     public bool isReady;
 
-    /// <summary>常驻包是否已加载完成（业务等这个再 DoFile / GetAsset）。</summary>
+    /// <summary>常驻包是否加载完成，业务等这个再 DoFile / GetAsset</summary>
     public bool isBundlesLoaded;
 
     public Dictionary<string, AssetBundle> assetBundles = new Dictionary<string, AssetBundle>();
@@ -56,19 +52,19 @@ public class Downloader : Singleton<Downloader>
     [Header("更新 UI")]
     [SerializeField] private Slider slider;
     [SerializeField] private Text text;
-    [SerializeField] private Button retryButton;   // 失败时才出现的重试按钮，代码里绑 onClick
+    [SerializeField] private Button retryButton;   // 失败时才显示的重试按钮，onClick 在代码里绑
 
-    [Header("单次网络请求超时（秒），0 = 不限")]
+    [Header("单次网络请求超时（秒），0 表示不限制")]
     [SerializeField] private int timeout = 10;
 
     public Action downloadOnComplete;
     public Action<string> downloadOnFailed;
     public Action onBundlesLoaded;
 
-    /// <summary>下载阶段是否失败。调 StartDownload() 重试后会自动清零。</summary>
+    /// <summary>下载阶段是否失败，调 StartDownload 重试时会自动清零</summary>
     public bool hasFailed { get; private set; }
 
-    /// <summary>最后一次失败的原因，供 UI / 日志用。</summary>
+    /// <summary>最后一次失败的原因，给 UI 和日志用</summary>
     public string lastError { get; private set; }
 
     protected override void Awake()
@@ -84,15 +80,15 @@ public class Downloader : Singleton<Downloader>
 
         if (retryButton != null)
         {
-            retryButton.onClick.AddListener(StartDownload);   // 代码绑定，省得去 Inspector 拖 onClick
+            retryButton.onClick.AddListener(StartDownload);   // 代码绑定，省得在 Inspector 上拖
         }
 
-        StartDownload();   // 里面会隐藏重试按钮，所以不要再单独 SetActive(false)
+        StartDownload();   // 里面会隐藏重试按钮，不用再单独 SetActive(false)
     }
 
     /// <summary>
-    /// 启动下载；下载中或已完成时重复调用无效。失败后业务可再调它重试。
-    /// 重试是"干净重来"：清掉失败状态，已下好的包会在对比阶段命中缓存，只补缺的那几个。
+    /// 启动下载。正在下载或已经下完时重复调用无效，失败后业务可以再调它重试。
+    /// 重试是重新走一遍流程，已经下好的包会在对比阶段命中缓存，只补缺的那几个。
     /// </summary>
     public void StartDownload()
     {
@@ -104,7 +100,7 @@ public class Downloader : Singleton<Downloader>
         hasFailed = false;
         lastError = null;
         SetProgressUIVisible(true);   // 重试期间进度要看得见
-        SetRetryVisible(false);       // 但重试按钮要收起来，避免连点
+        SetRetryVisible(false);       // 但重试按钮先收起来，避免连点
 
         isDownloading = true;
         StartCoroutine(RunDownload());
@@ -118,13 +114,13 @@ public class Downloader : Singleton<Downloader>
         }
         finally
         {
-            isDownloading = false;   // 无论成败都解锁，允许重试
+            isDownloading = false;   // 不管成功失败都解锁，允许重试
         }
     }
 
     IEnumerator DownloadAll()
     {
-        // ---- ① 拉远程清单（自动重试） ----
+        // 1. 拉远程清单（内部带重试）
         SetProgress(0f, "正在检查更新…");
         byte[] manifestBytes = null;
         yield return DownloadData(path + "manifest.json", r => manifestBytes = r, null);
@@ -151,7 +147,7 @@ public class Downloader : Singleton<Downloader>
             yield break;
         }
 
-        // ---- ② 对比本地缓存，算出真正要下的差异包 ----
+        // 2. 和本地缓存对比，算出真正要下的包
         HotUpdateManifest localManifest = GetLocalManifest();
 
         List<BundleInfo> needDownload = new List<BundleInfo>();
@@ -172,10 +168,10 @@ public class Downloader : Singleton<Downloader>
         if (needDownload.Count == 0)
         {
             SetProgress(1f, "已是最新版本");
-            yield return new WaitForSeconds(0.5f);   // 停留一下再进入加载阶段
+            yield return new WaitForSeconds(0.5f);   // 停一下再进加载阶段
         }
 
-        // ---- ③ 逐个差异下载（整体进度实时更新：已完成包 + 当前包进度） ----
+        // 3. 逐个下载差异包，进度按"已完成的包 + 当前包进度"实时更新
         int total = needDownload.Count;
         int downloaded = 0;
         foreach (BundleInfo info in needDownload)
@@ -185,7 +181,6 @@ public class Downloader : Singleton<Downloader>
                 r => data = r,
                 p =>
                 {
-                    // 整体进度 = (已完成的包数 + 当前包进度) / 总需下载包数
                     float overall = total > 0 ? (downloaded + p) / total : 1f;
                     SetProgress(overall, $"正在下载 {info.name}  ({downloaded + 1}/{total})  {Mathf.Floor(p * 100)}%");
                 });
@@ -201,7 +196,7 @@ public class Downloader : Singleton<Downloader>
             Debug.Log($"{info.name} 下载并保存成功");
         }
 
-        // ---- ④ 主包必须就位，读依赖表（LoadBundle 递归全靠它） ----
+        // 4. 主包就位后才能读依赖表，后面 LoadBundle 的递归全靠它
         string masterPath = localBundlesPath + "/" + masterBundleName;
         if (!File.Exists(masterPath))
         {
@@ -223,11 +218,11 @@ public class Downloader : Singleton<Downloader>
             yield break;
         }
 
-        // ---- ⑤ 收尾：本地清单"滞后提交"（避免半截文件被误当做好文件），再广播下载完成 ----
+        // 5. 最后才写本地清单，避免半截文件被当成好文件，然后广播下载完成
         SaveManifestToLocal(remoteManifest);
 
         SetProgress(1f, "更新完成");
-        yield return new WaitForSeconds(0.5f);   // 让"更新完成"字样停留一下再隐藏
+        yield return new WaitForSeconds(0.5f);   // 让"更新完成"多停一会儿
 
         isReady = true;
         downloadOnComplete?.Invoke();
@@ -235,8 +230,8 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// 带重试的统一下载。只要成功一次：onResult(字节)。全部失败：onResult(null)。
-    /// onProgress 实时回调 0~1，不需要就传 null（manifest 小，不显示进度）。
+    /// 带重试的下载。成功时回调 onResult(字节)，全部失败回调 onResult(null)。
+    /// onProgress 实时回调 0~1，不需要进度就传 null（清单很小，不用显示进度）。
     /// </summary>
     IEnumerator DownloadData(string url, Action<byte[]> onResult, Action<float> onProgress)
     {
@@ -246,7 +241,7 @@ public class Downloader : Singleton<Downloader>
             {
                 if (timeout > 0)
                 {
-                    www.timeout = timeout;   // 服务器连上却不响应时，别在这一帧无限等下去
+                    www.timeout = timeout;   // 服务器连上了却不响应时，别在这一帧死等
                 }
 
                 www.SendWebRequest();
@@ -269,7 +264,7 @@ public class Downloader : Singleton<Downloader>
 
             if (i < maxRetry)
             {
-                yield return new WaitForSeconds(1f);   // 停 1 秒再试，别疯狂重连
+                yield return new WaitForSeconds(1f);   // 隔一秒再试，别连续重连
             }
         }
 
@@ -296,8 +291,8 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// 加载一个包（含依赖）并把计数 +1。加载失败返回 null，由调用方处理。
-    /// 运行期失败只打日志，不再触发 downloadOnFailed（那是下载阶段的事件）。
+    /// 加载一个包（含依赖）并把引用计数加一，失败返回 null 由调用方处理。
+    /// 运行期加载失败只打日志，不触发 downloadOnFailed，那是下载阶段的事件。
     /// </summary>
     public AssetBundle LoadBundle(string bundleName)
     {
@@ -352,7 +347,7 @@ public class Downloader : Singleton<Downloader>
         }
         catch (Exception e)
         {
-            // 写盘失败这里只报错不中断；下次启动时清单对比会发现文件缺失/不符，自动重下（自愈）
+            // 这里只报错不中断。下次启动对比清单时会发现文件缺失，重新下载
             Debug.LogError("保存到本地失败:" + e.Message);
         }
     }
@@ -387,10 +382,7 @@ public class Downloader : Singleton<Downloader>
         return null;
     }
 
-    /// <summary>
-    /// 统一刷新进度 UI：整体进度(0~1) + 状态文案。
-    /// UI 未拖引用时自动跳过，不影响逻辑。
-    /// </summary>
+    /// <summary>刷新进度 UI：整体进度(0~1) + 状态文案。没拖引用会自动跳过，不影响逻辑。</summary>
     private void SetProgress(float overall, string status)
     {
         if (slider != null)
@@ -404,10 +396,8 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// 下载阶段失败统一出口：置失败状态、刷新 UI 文案、亮出重试按钮、触发 downloadOnFailed。
-    /// 不隐藏进度 UI，把错误留在屏幕上，玩家可据此决定是否重试。
-    /// 由 FailAndNotify 写的 hasFailed 不会中断任何等待者——它们留在原地等重试成功，
-    /// 这样重试成功后整条启动链路会自动继续，不需要谁去重新驱动。
+    /// 下载失败的统一出口：记录原因、刷新 UI 文案、亮出重试按钮、触发 downloadOnFailed。
+    /// 这里不隐藏进度 UI，错误要留在屏幕上，玩家才能判断要不要重试。
     /// </summary>
     private void FailAndNotify(string message)
     {
@@ -415,7 +405,7 @@ public class Downloader : Singleton<Downloader>
         lastError = message;
 
         SetProgress(slider != null ? slider.value : 0f, message);
-        SetProgressUIVisible(true);   // 失败原因必须留在屏幕上，别被上一次成功时的隐藏盖掉
+        SetProgressUIVisible(true);   // 错误原因要留在屏幕上，别被上一次成功的隐藏盖掉
         SetRetryVisible(true);
 
         Debug.LogError("[热更] " + message);
@@ -428,10 +418,8 @@ public class Downloader : Singleton<Downloader>
         if (text != null) { text.gameObject.SetActive(visible); }
     }
 
-    /// <summary>
-    /// 重试按钮单独控制，不并进 SetProgressUIVisible：
-    /// 否则"开始下载时显示进度"会顺带把失败时该藏起来的重试按钮一起点亮。
-    /// </summary>
+    // 重试按钮单独控制，不并进 SetProgressUIVisible，
+    // 否则"开始下载时显示进度"会顺手把失败时才该出现的重试按钮也点亮
     private void SetRetryVisible(bool visible)
     {
         if (retryButton != null) { retryButton.gameObject.SetActive(visible); }
@@ -444,26 +432,23 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// 从"已加载"的包里取资源：只借用、不计数。
-    /// 包未加载时返回 null 并提示。正常时序下（等 onBundlesLoaded）常驻包必已就绪，不会再走到提示。
+    /// 从已加载的包里取资源，只借用不计数。包没加载时返回 null 并提示。
+    /// 正常时序下（等 onBundlesLoaded 再取）常驻包一定已经就绪，不会走到提示分支。
     /// </summary>
     public T GetAsset<T>(string bundleName, string fileName) where T : UnityEngine.Object
     {
         if (!assetBundles.TryGetValue(bundleName, out AssetBundle ab))
         {
-            Debug.LogWarning($"{bundleName} 尚未加载，GetAsset 只借用已加载的包：\n" +
-                             "① 若属常驻包：确认已填进 CommonBundleLoader，并等 onBundlesLoaded 再取用；\n" +
-                             "② 若属场景包：确认该场景 SceneBundleLoader 加载完成（IsReady）后再取用。");
+            Debug.LogWarning($"{bundleName} 尚未加载，GetAsset 只能从已加载的包里取：\n" +
+                             "常驻包请确认已填进 CommonBundleLoader，并等 onBundlesLoaded 后再取用；\n" +
+                             "场景包请确认本场景的 SceneBundleLoader 已加载完成（IsReady）。");
             return null;
         }
 
         return ab.LoadAsset<T>(fileName);
     }
 
-    /// <summary>
-    /// 常驻包全部加载完成后由 CommonBundleLoader 调用（幂等）。
-    /// 触发后 onBundlesLoaded 广播，业务脚本可以安全 DoFile / GetAsset 了。
-    /// </summary>
+    /// <summary>常驻包全部加载完成后由 CommonBundleLoader 调用，重复调用无效</summary>
     public void NotifyBundlesLoaded()
     {
         if (isBundlesLoaded)
@@ -509,11 +494,11 @@ public class Downloader : Singleton<Downloader>
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();   // 清 Singleton.instance，防悬挂引用
+        base.OnDestroy();   // 清掉 Singleton 里的静态引用
 
         if (masterBundle != null)
         {
-            masterBundle.Unload(true);   // 主包不入字典，退出时单独释放
+            masterBundle.Unload(true);   // 主包不在字典里，单独释放
             masterBundle = null;
             unityManifest = null;
         }
