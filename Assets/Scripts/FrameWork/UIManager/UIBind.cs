@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using XLua;
@@ -13,55 +14,41 @@ namespace Framework.UI
     [LuaCallCSharp]
     public class UIBind : MonoBehaviour
     {
-        /// <summary>一条引用记录：key 是给 Lua 用的名字，target 是要拖的节点或组件</summary>
-        [Serializable]
-        public struct Binding
-        {
-            public string key;
-            public UnityEngine.Object target;
-        }
-
-        [Header("引用绑定，key 一般直接填节点名")]
-        [SerializeField]
-        private Binding[] bindings;
-
-        private Dictionary<string, UnityEngine.Object> lookup = new Dictionary<string, UnityEngine.Object>();
+        private Dictionary<string, GameObject> lookup = new Dictionary<string, GameObject>();
 
         /// <summary>面板返回自己的 Lua 模块表（按钮回调往它上面转发）；列表格子没有模块，返回 null</summary>
         protected virtual LuaTable Owner => null;
 
         private void Awake()
         {
-            InitLookup();
+            InitLookup(transform);
         }
 
         // 建查找表不需要 Lua 参与，所以放在 Awake。
         // 格子从池里复用时 Awake 不会重跑，这张表建一次就够了。
-        private void InitLookup()
+        private void InitLookup(Transform transform)
         {
-            if (bindings == null)
+            for(int i = 0; i<transform.childCount; i++)
             {
-                return;
-            }
-
-            foreach (Binding binding in bindings)
-            {
-                if (string.IsNullOrEmpty(binding.key) || binding.target == null)
+                GameObject child = transform.GetChild(i).gameObject;
+                if (lookup.ContainsKey(child.name))
                 {
+                    Debug.Log($"发现同名对象{child.name}，已跳过");
                     continue;
                 }
+                lookup[child.name] = child;
 
-                lookup[binding.key] = binding.target;
+                InitLookup(child.transform);
             }
         }
 
         /// <summary>
-        /// 取引用。返回的是 UnityEngine.Object，xLua 会按运行时类型推给 Lua，
-        /// 所以 Lua 侧可以直接当原本的类型用：self.view:Get("Txt_Name").text = "abc"
+        /// 取引用。返回的是 GameObject，xLua 会按运行时类型推给 Lua，
+        /// 所以 Lua 侧可以直接当原本的类型用：self.view:Get("Txt_Name"):GetComponent("Text").text = "abc"
         /// </summary>
-        public UnityEngine.Object Get(string key)
+        public GameObject Get(string key)
         {
-            if (!lookup.TryGetValue(key, out UnityEngine.Object o))
+            if (!lookup.TryGetValue(key, out GameObject o))
             {
                 Debug.Log($"不存在key{key}");
                 return null;
@@ -75,7 +62,7 @@ namespace Framework.UI
         /// </summary>
         public void BindClick(string key, string method)
         {
-            if (!lookup.TryGetValue(key, out UnityEngine.Object o))
+            if (!lookup.TryGetValue(key, out GameObject o))
             {
                 Debug.Log($"不存在key{key}");
                 return;
@@ -87,7 +74,9 @@ namespace Framework.UI
                 return;
             }
 
-            if (o is not Button button)
+            Button button = o.GetComponent<Button>();
+
+            if (button == null)
             {
                 Debug.Log($"{key}不是button");
                 return;
@@ -101,15 +90,16 @@ namespace Framework.UI
         /// <summary>给 ScrollListView 用：把格子里的按钮统一接到一个出口，回调会带上 key</summary>
         internal void BindAllButton(Action<UIBind, string> handler)
         {
-            foreach (Binding binding in bindings)
+            foreach (KeyValuePair<string,GameObject> pair in lookup)
             {
-                if (binding.target is not Button button)
+                Button button = pair.Value.GetComponent<Button>();
+                if (button == null)
                 {
                     continue;
                 }
 
                 button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() => handler(this, binding.key));
+                button.onClick.AddListener(() => handler(this, pair.Key));
             }
         }
 

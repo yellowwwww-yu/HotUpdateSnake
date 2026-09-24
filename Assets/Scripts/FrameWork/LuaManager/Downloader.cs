@@ -50,6 +50,7 @@ public class Downloader : Singleton<Downloader>
     public Dictionary<string, int> refCounts = new Dictionary<string, int>();
 
     [Header("更新 UI")]
+    [SerializeField] private Transform UI;
     [SerializeField] private Slider slider;
     [SerializeField] private Text text;
     [SerializeField] private Button retryButton;   // 失败时才显示的重试按钮，onClick 在代码里绑
@@ -414,8 +415,7 @@ public class Downloader : Singleton<Downloader>
 
     private void SetProgressUIVisible(bool visible)
     {
-        if (slider != null) { slider.gameObject.SetActive(visible); }
-        if (text != null) { text.gameObject.SetActive(visible); }
+        if(UI!=null){UI.gameObject.SetActive(visible);}
     }
 
     // 重试按钮单独控制，不并进 SetProgressUIVisible，

@@ -1,22 +1,26 @@
 ManifestFileVersion: 0
-CRC: 2879316049
+CRC: 3192320120
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d317fd5da77f5c6e3a068548185d24f7
+    Hash: e96459d8197b457b9ee9029e2fa19781
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: d317fd5da77f5c6e3a068548185d24f7
+    Hash: e96459d8197b457b9ee9029e2fa19781
 HashAppended: 0
 ClassTypes:
 - Class: 49
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
+- Assets/LuaScripts/LuaText/UI/LoginPanel.lua.txt
+- Assets/LuaScripts/LuaText/FrameWork/EventCenter.lua.txt
 - Assets/LuaScripts/LuaText/Main.lua.txt
+- Assets/LuaScripts/LuaText/UI/LobbyPanel.lua.txt
+- Assets/LuaScripts/LuaText/UI/PanelBase.lua.txt
 - Assets/LuaScripts/LuaText/Game/Snake.lua.txt
 - Assets/LuaScripts/LuaText/Game/SnakeDemo.lua.txt
 Dependencies: []

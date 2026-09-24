@@ -65,6 +65,14 @@ namespace Framework.UI
             }
         }
 
+        private void Start()
+        {
+            if (LuaManager.Instance != null)
+            {
+                LuaManager.Instance.Inject("UIManager", this);
+            }
+        }
+
         // ==================== 给 Lua 用的接口 ====================
 
         public void Open(string name) => Open(name, null);
