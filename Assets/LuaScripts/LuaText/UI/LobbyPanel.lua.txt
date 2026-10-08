@@ -8,6 +8,11 @@ local LobbyPanel = PanelBase:Create();
 
 function LobbyPanel:OnOpen(data)
     self.view:BindClick("Btn_Start", "OnClickStart");
+    self.view:BindClick("Btn_Rank", "OnClickRank");
+end
+
+function LobbyPanel:OnClickRank()
+    UIManager:Open("RankPanel");
 end
 
 function LobbyPanel:OnClickStart()

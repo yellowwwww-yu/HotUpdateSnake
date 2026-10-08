@@ -8,64 +8,64 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 /// <summary>
-/// ÈÈ¸üĞÂÏÂÔØÓë×ÊÔ´¼ÓÔØºËĞÄ£¬µ¥Àı£¬¹ÒÔÚ³£×¤¹¦ÄÜ³¡¾°ÉÏ¡£
+/// çƒ­æ›´æ–°ä¸‹è½½ä¸èµ„æºåŠ è½½æ ¸å¿ƒï¼Œå•ä¾‹ï¼ŒæŒ‚åœ¨å¸¸é©»åŠŸèƒ½åœºæ™¯ä¸Šã€‚
 ///
-/// ÏÈÏÂÔØºó¼ÓÔØ£º
-///   À­Ô¶³ÌÇåµ¥ ¡ú ºÍ±¾µØ»º´æ¶Ô±È ¡ú ÏÂÔØ²îÒì°ü ¡ú ¶ÁÖ÷°üÀïµÄÒÀÀµ±í ¡ú isReady = true
-///   Ö®ºó CommonBundleLoader ¼ÓÔØ³£×¤°ü¡¢SceneBundleLoader ¼ÓÔØ³¡¾°°ü£¬¶¼×ß LoadBundle ¼ÇÕË
-///   ³£×¤°ü¼ÓÔØÍêÓÉ CommonBundleLoader µ÷ NotifyBundlesLoaded£¬ÒµÎñÕâÊ±²ÅÄÜÈ¡×ÊÔ´
+/// å…ˆä¸‹è½½ååŠ è½½ï¼š
+///   æ‹‰è¿œç¨‹æ¸…å• â†’ å’Œæœ¬åœ°ç¼“å­˜å¯¹æ¯” â†’ ä¸‹è½½å·®å¼‚åŒ… â†’ è¯»ä¸»åŒ…é‡Œçš„ä¾èµ–è¡¨ â†’ isReady = true
+///   ä¹‹å CommonBundleLoader åŠ è½½å¸¸é©»åŒ…ã€SceneBundleLoader åŠ è½½åœºæ™¯åŒ…ï¼Œéƒ½èµ° LoadBundle è®°è´¦
+///   å¸¸é©»åŒ…åŠ è½½å®Œç”± CommonBundleLoader è°ƒ NotifyBundlesLoadedï¼Œä¸šåŠ¡è¿™æ—¶æ‰èƒ½å–èµ„æº
 ///
-/// Èı¸öĞÅºÅ²»Òª»ìÓÃ£º
-///   downloadOnComplete  ÏÂÔØÍê³É£¬°üÒÑ¾­Âäµ½´ÅÅÌ£¨²»´ú±íÒÑ¼ÓÔØ£©
-///   downloadOnFailed    Ö»ÔÚÏÂÔØ½×¶ÎÊ§°ÜÊ±´¥·¢£¬ÔËĞĞÆÚ¼ÓÔØÊ§°Ü²»×ßËü
-///   onBundlesLoaded     ³£×¤°üÒÑ¼ÓÔØ£¬¿ÉÒÔ°²È« DoFile / GetAsset
+/// ä¸‰ä¸ªä¿¡å·ä¸è¦æ··ç”¨ï¼š
+///   downloadOnComplete  ä¸‹è½½å®Œæˆï¼ŒåŒ…å·²ç»è½åˆ°ç£ç›˜ï¼ˆä¸ä»£è¡¨å·²åŠ è½½ï¼‰
+///   downloadOnFailed    åªåœ¨ä¸‹è½½é˜¶æ®µå¤±è´¥æ—¶è§¦å‘ï¼Œè¿è¡ŒæœŸåŠ è½½å¤±è´¥ä¸èµ°å®ƒ
+///   onBundlesLoaded     å¸¸é©»åŒ…å·²åŠ è½½ï¼Œå¯ä»¥å®‰å…¨ DoFile / GetAsset
 ///
-/// ÏÂÔØÊ§°ÜÍ³Ò»×ß FailAndNotify£º¼ÇÏÂÔ­Òò¡¢°Ñ½ø¶È UI »»³É´íÎóÌáÊ¾¡¢ÁÁ³öÖØÊÔ°´Å¥¡£
-/// µÈ×ÅÏÂÔØÍê³ÉµÄ Loader Ê§°ÜÊ±²»ÍË³öÑ­»·£¬ÁôÔÚÔ­µØµÈÖØÊÔ³É¹¦£¬
-/// ÕâÑùÖØÊÔÖ®ºóÕûÌõÁ´Â·»á×Ô¼º¼ÌĞø£¬²»ĞèÒªË­È¥ÖØĞÂÇı¶¯¡£
+/// ä¸‹è½½å¤±è´¥ç»Ÿä¸€èµ° FailAndNotifyï¼šè®°ä¸‹åŸå› ã€æŠŠè¿›åº¦ UI æ¢æˆé”™è¯¯æç¤ºã€äº®å‡ºé‡è¯•æŒ‰é’®ã€‚
+/// ç­‰ç€ä¸‹è½½å®Œæˆçš„ Loader å¤±è´¥æ—¶ä¸é€€å‡ºå¾ªç¯ï¼Œç•™åœ¨åŸåœ°ç­‰é‡è¯•æˆåŠŸï¼Œ
+/// è¿™æ ·é‡è¯•ä¹‹åæ•´æ¡é“¾è·¯ä¼šè‡ªå·±ç»§ç»­ï¼Œä¸éœ€è¦è°å»é‡æ–°é©±åŠ¨ã€‚
 /// </summary>
 public class Downloader : Singleton<Downloader>
 {
-    [Header("¸üĞÂ·şÎñÆ÷µØÖ·£¨Ä©Î²´ø/£©")]
-    [SerializeField] private string path = @"http://localhost/ÈÈ¸üĞÂÌ°³ÔÉß/AssetBundles/PC/";
+    [Header("æ›´æ–°æœåŠ¡å™¨åœ°å€ï¼ˆæœ«å°¾å¸¦/ï¼‰")]
+    [SerializeField] private string path = @"http://localhost/çƒ­æ›´æ–°è´ªåƒè›‡/AssetBundles/PC/";
 
-    [Header("ÍøÂçÇëÇóÊ§°Ü×Ô¶¯ÖØÊÔ´ÎÊı")]
+    [Header("ç½‘ç»œè¯·æ±‚å¤±è´¥è‡ªåŠ¨é‡è¯•æ¬¡æ•°")]
     [SerializeField] private int maxRetry = 3;
 
     private string localBundlesPath;
     private string localManifestPath;
     private string masterBundleName = "PC";
 
-    private AssetBundleManifest unityManifest;   // ÒÀÀµ¹ØÏµ±í£¬´ÓÖ÷°üÀï¶Á
-    private AssetBundle masterBundle;            // Ö÷°ü±¾Ìå£¬Ö»ÓÃÀ´¶ÁÒÀÀµ±í£¬²»½øÒıÓÃ¼ÆÊı
-    private bool isDownloading;                  // ·ÀÖ¹ÖØ¸´´¥·¢ÏÂÔØ
+    private AssetBundleManifest unityManifest;   // ä¾èµ–å…³ç³»è¡¨ï¼Œä»ä¸»åŒ…é‡Œè¯»
+    private AssetBundle masterBundle;            // ä¸»åŒ…æœ¬ä½“ï¼Œåªç”¨æ¥è¯»ä¾èµ–è¡¨ï¼Œä¸è¿›å¼•ç”¨è®¡æ•°
+    private bool isDownloading;                  // é˜²æ­¢é‡å¤è§¦å‘ä¸‹è½½
 
-    /// <summary>ÏÂÔØ½×¶ÎÊÇ·ñÍê³É£¨°üÎÄ¼ş¶¼ÔÚ´ÅÅÌÉÏÁË£©£¬Loader µÈÕâ¸öÔÙ¿ªÊ¼¼ÓÔØ</summary>
+    /// <summary>ä¸‹è½½é˜¶æ®µæ˜¯å¦å®Œæˆï¼ˆåŒ…æ–‡ä»¶éƒ½åœ¨ç£ç›˜ä¸Šäº†ï¼‰ï¼ŒLoader ç­‰è¿™ä¸ªå†å¼€å§‹åŠ è½½</summary>
     public bool isReady;
 
-    /// <summary>³£×¤°üÊÇ·ñ¼ÓÔØÍê³É£¬ÒµÎñµÈÕâ¸öÔÙ DoFile / GetAsset</summary>
+    /// <summary>å¸¸é©»åŒ…æ˜¯å¦åŠ è½½å®Œæˆï¼Œä¸šåŠ¡ç­‰è¿™ä¸ªå† DoFile / GetAsset</summary>
     public bool isBundlesLoaded;
 
     public Dictionary<string, AssetBundle> assetBundles = new Dictionary<string, AssetBundle>();
     public Dictionary<string, int> refCounts = new Dictionary<string, int>();
 
-    [Header("¸üĞÂ UI")]
+    [Header("æ›´æ–° UI")]
     [SerializeField] private Transform UI;
     [SerializeField] private Slider slider;
     [SerializeField] private Text text;
-    [SerializeField] private Button retryButton;   // Ê§°ÜÊ±²ÅÏÔÊ¾µÄÖØÊÔ°´Å¥£¬onClick ÔÚ´úÂëÀï°ó
+    [SerializeField] private Button retryButton;   // å¤±è´¥æ—¶æ‰æ˜¾ç¤ºçš„é‡è¯•æŒ‰é’®ï¼ŒonClick åœ¨ä»£ç é‡Œç»‘
 
-    [Header("µ¥´ÎÍøÂçÇëÇó³¬Ê±£¨Ãë£©£¬0 ±íÊ¾²»ÏŞÖÆ")]
+    [Header("å•æ¬¡ç½‘ç»œè¯·æ±‚è¶…æ—¶ï¼ˆç§’ï¼‰ï¼Œ0 è¡¨ç¤ºä¸é™åˆ¶")]
     [SerializeField] private int timeout = 10;
 
     public Action downloadOnComplete;
     public Action<string> downloadOnFailed;
     public Action onBundlesLoaded;
 
-    /// <summary>ÏÂÔØ½×¶ÎÊÇ·ñÊ§°Ü£¬µ÷ StartDownload ÖØÊÔÊ±»á×Ô¶¯ÇåÁã</summary>
+    /// <summary>ä¸‹è½½é˜¶æ®µæ˜¯å¦å¤±è´¥ï¼Œè°ƒ StartDownload é‡è¯•æ—¶ä¼šè‡ªåŠ¨æ¸…é›¶</summary>
     public bool hasFailed { get; private set; }
 
-    /// <summary>×îºóÒ»´ÎÊ§°ÜµÄÔ­Òò£¬¸ø UI ºÍÈÕÖ¾ÓÃ</summary>
+    /// <summary>æœ€åä¸€æ¬¡å¤±è´¥çš„åŸå› ï¼Œç»™ UI å’Œæ—¥å¿—ç”¨</summary>
     public string lastError { get; private set; }
 
     protected override void Awake()
@@ -81,15 +81,15 @@ public class Downloader : Singleton<Downloader>
 
         if (retryButton != null)
         {
-            retryButton.onClick.AddListener(StartDownload);   // ´úÂë°ó¶¨£¬Ê¡µÃÔÚ Inspector ÉÏÍÏ
+            retryButton.onClick.AddListener(StartDownload);   // ä»£ç ç»‘å®šï¼Œçœå¾—åœ¨ Inspector ä¸Šæ‹–
         }
 
-        StartDownload();   // ÀïÃæ»áÒş²ØÖØÊÔ°´Å¥£¬²»ÓÃÔÙµ¥¶À SetActive(false)
+        StartDownload();   // é‡Œé¢ä¼šéšè—é‡è¯•æŒ‰é’®ï¼Œä¸ç”¨å†å•ç‹¬ SetActive(false)
     }
 
     /// <summary>
-    /// Æô¶¯ÏÂÔØ¡£ÕıÔÚÏÂÔØ»òÒÑ¾­ÏÂÍêÊ±ÖØ¸´µ÷ÓÃÎŞĞ§£¬Ê§°ÜºóÒµÎñ¿ÉÒÔÔÙµ÷ËüÖØÊÔ¡£
-    /// ÖØÊÔÊÇÖØĞÂ×ßÒ»±éÁ÷³Ì£¬ÒÑ¾­ÏÂºÃµÄ°ü»áÔÚ¶Ô±È½×¶ÎÃüÖĞ»º´æ£¬Ö»²¹È±µÄÄÇ¼¸¸ö¡£
+    /// å¯åŠ¨ä¸‹è½½ã€‚æ­£åœ¨ä¸‹è½½æˆ–å·²ç»ä¸‹å®Œæ—¶é‡å¤è°ƒç”¨æ— æ•ˆï¼Œå¤±è´¥åä¸šåŠ¡å¯ä»¥å†è°ƒå®ƒé‡è¯•ã€‚
+    /// é‡è¯•æ˜¯é‡æ–°èµ°ä¸€éæµç¨‹ï¼Œå·²ç»ä¸‹å¥½çš„åŒ…ä¼šåœ¨å¯¹æ¯”é˜¶æ®µå‘½ä¸­ç¼“å­˜ï¼Œåªè¡¥ç¼ºçš„é‚£å‡ ä¸ªã€‚
     /// </summary>
     public void StartDownload()
     {
@@ -100,8 +100,8 @@ public class Downloader : Singleton<Downloader>
 
         hasFailed = false;
         lastError = null;
-        SetProgressUIVisible(true);   // ÖØÊÔÆÚ¼ä½ø¶ÈÒª¿´µÃ¼û
-        SetRetryVisible(false);       // µ«ÖØÊÔ°´Å¥ÏÈÊÕÆğÀ´£¬±ÜÃâÁ¬µã
+        SetProgressUIVisible(true);   // é‡è¯•æœŸé—´è¿›åº¦è¦çœ‹å¾—è§
+        SetRetryVisible(false);       // ä½†é‡è¯•æŒ‰é’®å…ˆæ”¶èµ·æ¥ï¼Œé¿å…è¿ç‚¹
 
         isDownloading = true;
         StartCoroutine(RunDownload());
@@ -115,20 +115,20 @@ public class Downloader : Singleton<Downloader>
         }
         finally
         {
-            isDownloading = false;   // ²»¹Ü³É¹¦Ê§°Ü¶¼½âËø£¬ÔÊĞíÖØÊÔ
+            isDownloading = false;   // ä¸ç®¡æˆåŠŸå¤±è´¥éƒ½è§£é”ï¼Œå…è®¸é‡è¯•
         }
     }
 
     IEnumerator DownloadAll()
     {
-        // 1. À­Ô¶³ÌÇåµ¥£¨ÄÚ²¿´øÖØÊÔ£©
-        SetProgress(0f, "ÕıÔÚ¼ì²é¸üĞÂ¡­");
+        // 1. æ‹‰è¿œç¨‹æ¸…å•ï¼ˆå†…éƒ¨å¸¦é‡è¯•ï¼‰
+        SetProgress(0f, "æ­£åœ¨æ£€æŸ¥æ›´æ–°â€¦");
         byte[] manifestBytes = null;
         yield return DownloadData(path + "manifest.json", r => manifestBytes = r, null);
 
         if (manifestBytes == null)
         {
-            FailAndNotify($"»ñÈ¡Ô¶³ÌÇåµ¥Ê§°Ü£¨ÒÑÖØÊÔ{maxRetry}´Î£©£¬Çë¼ì²éÍøÂçºóµãÖØÊÔ");
+            FailAndNotify($"è·å–è¿œç¨‹æ¸…å•å¤±è´¥ï¼ˆå·²é‡è¯•{maxRetry}æ¬¡ï¼‰ï¼Œè¯·æ£€æŸ¥ç½‘ç»œåç‚¹é‡è¯•");
             yield break;
         }
 
@@ -139,16 +139,16 @@ public class Downloader : Singleton<Downloader>
         }
         catch (Exception e)
         {
-            Debug.LogError("Ô¶³ÌÇåµ¥½âÎöÒì³££º" + e.Message);
+            Debug.LogError("è¿œç¨‹æ¸…å•è§£æå¼‚å¸¸ï¼š" + e.Message);
         }
 
         if (remoteManifest == null || remoteManifest.bundles == null || remoteManifest.bundles.Count == 0)
         {
-            FailAndNotify("Ô¶³ÌÇåµ¥ÄÚÈİÎª¿Õ»ò¸ñÊ½´íÎó");
+            FailAndNotify("è¿œç¨‹æ¸…å•å†…å®¹ä¸ºç©ºæˆ–æ ¼å¼é”™è¯¯");
             yield break;
         }
 
-        // 2. ºÍ±¾µØ»º´æ¶Ô±È£¬Ëã³öÕæÕıÒªÏÂµÄ°ü
+        // 2. å’Œæœ¬åœ°ç¼“å­˜å¯¹æ¯”ï¼Œç®—å‡ºçœŸæ­£è¦ä¸‹çš„åŒ…
         HotUpdateManifest localManifest = GetLocalManifest();
 
         List<BundleInfo> needDownload = new List<BundleInfo>();
@@ -158,21 +158,21 @@ public class Downloader : Singleton<Downloader>
                             && File.Exists(localBundlesPath + "/" + info.name);
             if (cacheHit)
             {
-                Debug.Log($"»º´æÃüÖĞ£¬{info.name} ÎŞĞèÏÂÔØ");
+                Debug.Log($"ç¼“å­˜å‘½ä¸­ï¼Œ{info.name} æ— éœ€ä¸‹è½½");
                 continue;
             }
 
             needDownload.Add(info);
         }
-        Debug.Log($"Ô¶³Ì¹² {remoteManifest.bundles.Count} ¸ö°ü£¬±¾´ÎĞèÏÂÔØ {needDownload.Count} ¸ö");
+        Debug.Log($"è¿œç¨‹å…± {remoteManifest.bundles.Count} ä¸ªåŒ…ï¼Œæœ¬æ¬¡éœ€ä¸‹è½½ {needDownload.Count} ä¸ª");
 
         if (needDownload.Count == 0)
         {
-            SetProgress(1f, "ÒÑÊÇ×îĞÂ°æ±¾");
-            yield return new WaitForSeconds(0.5f);   // Í£Ò»ÏÂÔÙ½ø¼ÓÔØ½×¶Î
+            SetProgress(1f, "å·²æ˜¯æœ€æ–°ç‰ˆæœ¬");
+            yield return new WaitForSeconds(0.5f);   // åœä¸€ä¸‹å†è¿›åŠ è½½é˜¶æ®µ
         }
 
-        // 3. Öğ¸öÏÂÔØ²îÒì°ü£¬½ø¶È°´"ÒÑÍê³ÉµÄ°ü + µ±Ç°°ü½ø¶È"ÊµÊ±¸üĞÂ
+        // 3. é€ä¸ªä¸‹è½½å·®å¼‚åŒ…ï¼Œè¿›åº¦æŒ‰"å·²å®Œæˆçš„åŒ… + å½“å‰åŒ…è¿›åº¦"å®æ—¶æ›´æ–°
         int total = needDownload.Count;
         int downloaded = 0;
         foreach (BundleInfo info in needDownload)
@@ -183,47 +183,47 @@ public class Downloader : Singleton<Downloader>
                 p =>
                 {
                     float overall = total > 0 ? (downloaded + p) / total : 1f;
-                    SetProgress(overall, $"ÕıÔÚÏÂÔØ {info.name}  ({downloaded + 1}/{total})  {Mathf.Floor(p * 100)}%");
+                    SetProgress(overall, $"æ­£åœ¨ä¸‹è½½ {info.name}  ({downloaded + 1}/{total})  {Mathf.Floor(p * 100)}%");
                 });
 
             if (data == null)
             {
-                FailAndNotify($"°ü {info.name} ÏÂÔØÊ§°Ü£¨ÒÑÖØÊÔ{maxRetry}´Î£©£¬±¾´Î¸üĞÂÖĞ¶Ï£¬¿ÉµãÖØÊÔ¼ÌĞø");
+                FailAndNotify($"åŒ… {info.name} ä¸‹è½½å¤±è´¥ï¼ˆå·²é‡è¯•{maxRetry}æ¬¡ï¼‰ï¼Œæœ¬æ¬¡æ›´æ–°ä¸­æ–­ï¼Œå¯ç‚¹é‡è¯•ç»§ç»­");
                 yield break;
             }
 
             SaveBundleToLocal(data, info.name);
             downloaded++;
-            Debug.Log($"{info.name} ÏÂÔØ²¢±£´æ³É¹¦");
+            Debug.Log($"{info.name} ä¸‹è½½å¹¶ä¿å­˜æˆåŠŸ");
         }
 
-        // 4. Ö÷°ü¾ÍÎ»ºó²ÅÄÜ¶ÁÒÀÀµ±í£¬ºóÃæ LoadBundle µÄµİ¹éÈ«¿¿Ëü
+        // 4. ä¸»åŒ…å°±ä½åæ‰èƒ½è¯»ä¾èµ–è¡¨ï¼Œåé¢ LoadBundle çš„é€’å½’å…¨é å®ƒ
         string masterPath = localBundlesPath + "/" + masterBundleName;
         if (!File.Exists(masterPath))
         {
-            FailAndNotify($"Ö÷°ü {masterBundleName} ²»ÔÚ±¾µØ£¬ÇëÈ·ÈÏ·şÎñÆ÷Çåµ¥°üº¬Ö÷°ü");
+            FailAndNotify($"ä¸»åŒ… {masterBundleName} ä¸åœ¨æœ¬åœ°ï¼Œè¯·ç¡®è®¤æœåŠ¡å™¨æ¸…å•åŒ…å«ä¸»åŒ…");
             yield break;
         }
 
         masterBundle = AssetBundle.LoadFromFile(masterPath);
         if (masterBundle == null)
         {
-            FailAndNotify("Ö÷°üËğ»µ£¬ÎŞ·¨¶ÁÈ¡ÒÀÀµ±í");
+            FailAndNotify("ä¸»åŒ…æŸåï¼Œæ— æ³•è¯»å–ä¾èµ–è¡¨");
             yield break;
         }
 
         unityManifest = masterBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
         if (unityManifest == null)
         {
-            FailAndNotify("Ö÷°üÄÚÒÀÀµ±íËğ»µ");
+            FailAndNotify("ä¸»åŒ…å†…ä¾èµ–è¡¨æŸå");
             yield break;
         }
 
-        // 5. ×îºó²ÅĞ´±¾µØÇåµ¥£¬±ÜÃâ°ë½ØÎÄ¼ş±»µ±³ÉºÃÎÄ¼ş£¬È»ºó¹ã²¥ÏÂÔØÍê³É
+        // 5. æœ€åæ‰å†™æœ¬åœ°æ¸…å•ï¼Œé¿å…åŠæˆªæ–‡ä»¶è¢«å½“æˆå¥½æ–‡ä»¶ï¼Œç„¶åå¹¿æ’­ä¸‹è½½å®Œæˆ
         SaveManifestToLocal(remoteManifest);
 
-        SetProgress(1f, "¸üĞÂÍê³É");
-        yield return new WaitForSeconds(0.5f);   // ÈÃ"¸üĞÂÍê³É"¶àÍ£Ò»»á¶ù
+        SetProgress(1f, "æ›´æ–°å®Œæˆ");
+        yield return new WaitForSeconds(0.5f);   // è®©"æ›´æ–°å®Œæˆ"å¤šåœä¸€ä¼šå„¿
 
         isReady = true;
         downloadOnComplete?.Invoke();
@@ -231,8 +231,8 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// ´øÖØÊÔµÄÏÂÔØ¡£³É¹¦Ê±»Øµ÷ onResult(×Ö½Ú)£¬È«²¿Ê§°Ü»Øµ÷ onResult(null)¡£
-    /// onProgress ÊµÊ±»Øµ÷ 0~1£¬²»ĞèÒª½ø¶È¾Í´« null£¨Çåµ¥ºÜĞ¡£¬²»ÓÃÏÔÊ¾½ø¶È£©¡£
+    /// å¸¦é‡è¯•çš„ä¸‹è½½ã€‚æˆåŠŸæ—¶å›è°ƒ onResult(å­—èŠ‚)ï¼Œå…¨éƒ¨å¤±è´¥å›è°ƒ onResult(null)ã€‚
+    /// onProgress å®æ—¶å›è°ƒ 0~1ï¼Œä¸éœ€è¦è¿›åº¦å°±ä¼  nullï¼ˆæ¸…å•å¾ˆå°ï¼Œä¸ç”¨æ˜¾ç¤ºè¿›åº¦ï¼‰ã€‚
     /// </summary>
     IEnumerator DownloadData(string url, Action<byte[]> onResult, Action<float> onProgress)
     {
@@ -242,7 +242,7 @@ public class Downloader : Singleton<Downloader>
             {
                 if (timeout > 0)
                 {
-                    www.timeout = timeout;   // ·şÎñÆ÷Á¬ÉÏÁËÈ´²»ÏìÓ¦Ê±£¬±ğÔÚÕâÒ»Ö¡ËÀµÈ
+                    www.timeout = timeout;   // æœåŠ¡å™¨è¿ä¸Šäº†å´ä¸å“åº”æ—¶ï¼Œåˆ«åœ¨è¿™ä¸€å¸§æ­»ç­‰
                 }
 
                 www.SendWebRequest();
@@ -255,21 +255,21 @@ public class Downloader : Singleton<Downloader>
 
                 if (www.result == UnityWebRequest.Result.Success)
                 {
-                    Debug.Log($"ÏÂÔØ³É¹¦£º{url}");
+                    Debug.Log($"ä¸‹è½½æˆåŠŸï¼š{url}");
                     onResult(www.downloadHandler.data);
                     yield break;
                 }
 
-                Debug.LogWarning($"µÚ {i}/{maxRetry} ´ÎÏÂÔØÊ§°Ü£º{url}£¬Ô­Òò£º{www.error}");
+                Debug.LogWarning($"ç¬¬ {i}/{maxRetry} æ¬¡ä¸‹è½½å¤±è´¥ï¼š{url}ï¼ŒåŸå› ï¼š{www.error}");
             }
 
             if (i < maxRetry)
             {
-                yield return new WaitForSeconds(1f);   // ¸ôÒ»ÃëÔÙÊÔ£¬±ğÁ¬ĞøÖØÁ¬
+                yield return new WaitForSeconds(1f);   // éš”ä¸€ç§’å†è¯•ï¼Œåˆ«è¿ç»­é‡è¿
             }
         }
 
-        Debug.LogError($"ÖØÊÔ {maxRetry} ´ÎºóÈÔÈ»Ê§°Ü£º{url}");
+        Debug.LogError($"é‡è¯• {maxRetry} æ¬¡åä»ç„¶å¤±è´¥ï¼š{url}");
         onResult(null);
     }
 
@@ -277,7 +277,7 @@ public class Downloader : Singleton<Downloader>
     {
         if (!File.Exists(localManifestPath))
         {
-            Debug.Log("Î´ÕÒµ½±¾µØManifestÎÄ¼ş");
+            Debug.Log("æœªæ‰¾åˆ°æœ¬åœ°Manifestæ–‡ä»¶");
             return null;
         }
 
@@ -292,21 +292,21 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// ¼ÓÔØÒ»¸ö°ü£¨º¬ÒÀÀµ£©²¢°ÑÒıÓÃ¼ÆÊı¼ÓÒ»£¬Ê§°Ü·µ»Ø null ÓÉµ÷ÓÃ·½´¦Àí¡£
-    /// ÔËĞĞÆÚ¼ÓÔØÊ§°ÜÖ»´òÈÕÖ¾£¬²»´¥·¢ downloadOnFailed£¬ÄÇÊÇÏÂÔØ½×¶ÎµÄÊÂ¼ş¡£
+    /// åŠ è½½ä¸€ä¸ªåŒ…ï¼ˆå«ä¾èµ–ï¼‰å¹¶æŠŠå¼•ç”¨è®¡æ•°åŠ ä¸€ï¼Œå¤±è´¥è¿”å› null ç”±è°ƒç”¨æ–¹å¤„ç†ã€‚
+    /// è¿è¡ŒæœŸåŠ è½½å¤±è´¥åªæ‰“æ—¥å¿—ï¼Œä¸è§¦å‘ downloadOnFailedï¼Œé‚£æ˜¯ä¸‹è½½é˜¶æ®µçš„äº‹ä»¶ã€‚
     /// </summary>
     public AssetBundle LoadBundle(string bundleName)
     {
         if (unityManifest == null)
         {
-            Debug.LogError($"{bundleName} ¼ÓÔØÊ§°Ü£ºÒÀÀµ±íÎ´¾ÍĞ÷£¨ÏÂÔØÎ´Íê³É»òÖ÷°üÈ±Ê§£©");
+            Debug.LogError($"{bundleName} åŠ è½½å¤±è´¥ï¼šä¾èµ–è¡¨æœªå°±ç»ªï¼ˆä¸‹è½½æœªå®Œæˆæˆ–ä¸»åŒ…ç¼ºå¤±ï¼‰");
             return null;
         }
 
         if (assetBundles.TryGetValue(bundleName, out AssetBundle bundle))
         {
             refCounts[bundleName] += 1;
-            Debug.Log($"{bundleName} ÒÑ±»¼ÓÔØ£¬ÒıÓÃ+1£¬µ±Ç°ÒıÓÃÊı£º{refCounts[bundleName]}");
+            Debug.Log($"{bundleName} å·²è¢«åŠ è½½ï¼Œå¼•ç”¨+1ï¼Œå½“å‰å¼•ç”¨æ•°ï¼š{refCounts[bundleName]}");
             return bundle;
         }
 
@@ -315,7 +315,7 @@ public class Downloader : Singleton<Downloader>
         {
             if (LoadBundle(dependence) == null)
             {
-                Debug.LogError($"»ñÈ¡ÒÀÀµ {dependence} Ê§°Ü");
+                Debug.LogError($"è·å–ä¾èµ– {dependence} å¤±è´¥");
                 return null;
             }
         }
@@ -323,20 +323,20 @@ public class Downloader : Singleton<Downloader>
         string bundlePath = localBundlesPath + "/" + bundleName;
         if (!File.Exists(bundlePath))
         {
-            Debug.LogError($"±¾µØÎÄ¼ş¶ªÊ§£º{bundleName}");
+            Debug.LogError($"æœ¬åœ°æ–‡ä»¶ä¸¢å¤±ï¼š{bundleName}");
             return null;
         }
 
         AssetBundle ab = AssetBundle.LoadFromFile(bundlePath);
         if (ab == null)
         {
-            Debug.LogError($"{bundleName} ±¾µØÎÄ¼şËğ»µ");
+            Debug.LogError($"{bundleName} æœ¬åœ°æ–‡ä»¶æŸå");
             return null;
         }
 
         assetBundles[bundleName] = ab;
         refCounts[bundleName] = 1;
-        Debug.Log($"{bundleName} ¼ÓÔØÍê³É£¬ÒıÓÃÊıÎª1");
+        Debug.Log($"{bundleName} åŠ è½½å®Œæˆï¼Œå¼•ç”¨æ•°ä¸º1");
         return ab;
     }
 
@@ -348,8 +348,8 @@ public class Downloader : Singleton<Downloader>
         }
         catch (Exception e)
         {
-            // ÕâÀïÖ»±¨´í²»ÖĞ¶Ï¡£ÏÂ´ÎÆô¶¯¶Ô±ÈÇåµ¥Ê±»á·¢ÏÖÎÄ¼şÈ±Ê§£¬ÖØĞÂÏÂÔØ
-            Debug.LogError("±£´æµ½±¾µØÊ§°Ü:" + e.Message);
+            // è¿™é‡ŒåªæŠ¥é”™ä¸ä¸­æ–­ã€‚ä¸‹æ¬¡å¯åŠ¨å¯¹æ¯”æ¸…å•æ—¶ä¼šå‘ç°æ–‡ä»¶ç¼ºå¤±ï¼Œé‡æ–°ä¸‹è½½
+            Debug.LogError("ä¿å­˜åˆ°æœ¬åœ°å¤±è´¥:" + e.Message);
         }
     }
 
@@ -361,7 +361,7 @@ public class Downloader : Singleton<Downloader>
         }
         catch (Exception e)
         {
-            Debug.LogError("±£´æManifestµ½±¾µØÊ±³ö´í£º" + e.Message);
+            Debug.LogError("ä¿å­˜Manifeståˆ°æœ¬åœ°æ—¶å‡ºé”™ï¼š" + e.Message);
         }
     }
 
@@ -383,7 +383,7 @@ public class Downloader : Singleton<Downloader>
         return null;
     }
 
-    /// <summary>Ë¢ĞÂ½ø¶È UI£ºÕûÌå½ø¶È(0~1) + ×´Ì¬ÎÄ°¸¡£Ã»ÍÏÒıÓÃ»á×Ô¶¯Ìø¹ı£¬²»Ó°ÏìÂß¼­¡£</summary>
+    /// <summary>åˆ·æ–°è¿›åº¦ UIï¼šæ•´ä½“è¿›åº¦(0~1) + çŠ¶æ€æ–‡æ¡ˆã€‚æ²¡æ‹–å¼•ç”¨ä¼šè‡ªåŠ¨è·³è¿‡ï¼Œä¸å½±å“é€»è¾‘ã€‚</summary>
     private void SetProgress(float overall, string status)
     {
         if (slider != null)
@@ -397,8 +397,8 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// ÏÂÔØÊ§°ÜµÄÍ³Ò»³ö¿Ú£º¼ÇÂ¼Ô­Òò¡¢Ë¢ĞÂ UI ÎÄ°¸¡¢ÁÁ³öÖØÊÔ°´Å¥¡¢´¥·¢ downloadOnFailed¡£
-    /// ÕâÀï²»Òş²Ø½ø¶È UI£¬´íÎóÒªÁôÔÚÆÁÄ»ÉÏ£¬Íæ¼Ò²ÅÄÜÅĞ¶ÏÒª²»ÒªÖØÊÔ¡£
+    /// ä¸‹è½½å¤±è´¥çš„ç»Ÿä¸€å‡ºå£ï¼šè®°å½•åŸå› ã€åˆ·æ–° UI æ–‡æ¡ˆã€äº®å‡ºé‡è¯•æŒ‰é’®ã€è§¦å‘ downloadOnFailedã€‚
+    /// è¿™é‡Œä¸éšè—è¿›åº¦ UIï¼Œé”™è¯¯è¦ç•™åœ¨å±å¹•ä¸Šï¼Œç©å®¶æ‰èƒ½åˆ¤æ–­è¦ä¸è¦é‡è¯•ã€‚
     /// </summary>
     private void FailAndNotify(string message)
     {
@@ -406,10 +406,10 @@ public class Downloader : Singleton<Downloader>
         lastError = message;
 
         SetProgress(slider != null ? slider.value : 0f, message);
-        SetProgressUIVisible(true);   // ´íÎóÔ­ÒòÒªÁôÔÚÆÁÄ»ÉÏ£¬±ğ±»ÉÏÒ»´Î³É¹¦µÄÒş²Ø¸Çµô
+        SetProgressUIVisible(true);   // é”™è¯¯åŸå› è¦ç•™åœ¨å±å¹•ä¸Šï¼Œåˆ«è¢«ä¸Šä¸€æ¬¡æˆåŠŸçš„éšè—ç›–æ‰
         SetRetryVisible(true);
 
-        Debug.LogError("[ÈÈ¸ü] " + message);
+        Debug.LogError("[çƒ­æ›´] " + message);
         downloadOnFailed?.Invoke(message);
     }
 
@@ -418,8 +418,8 @@ public class Downloader : Singleton<Downloader>
         if(UI!=null){UI.gameObject.SetActive(visible);}
     }
 
-    // ÖØÊÔ°´Å¥µ¥¶À¿ØÖÆ£¬²»²¢½ø SetProgressUIVisible£¬
-    // ·ñÔò"¿ªÊ¼ÏÂÔØÊ±ÏÔÊ¾½ø¶È"»áË³ÊÖ°ÑÊ§°ÜÊ±²Å¸Ã³öÏÖµÄÖØÊÔ°´Å¥Ò²µãÁÁ
+    // é‡è¯•æŒ‰é’®å•ç‹¬æ§åˆ¶ï¼Œä¸å¹¶è¿› SetProgressUIVisibleï¼Œ
+    // å¦åˆ™"å¼€å§‹ä¸‹è½½æ—¶æ˜¾ç¤ºè¿›åº¦"ä¼šé¡ºæ‰‹æŠŠå¤±è´¥æ—¶æ‰è¯¥å‡ºç°çš„é‡è¯•æŒ‰é’®ä¹Ÿç‚¹äº®
     private void SetRetryVisible(bool visible)
     {
         if (retryButton != null) { retryButton.gameObject.SetActive(visible); }
@@ -432,23 +432,23 @@ public class Downloader : Singleton<Downloader>
     }
 
     /// <summary>
-    /// ´ÓÒÑ¼ÓÔØµÄ°üÀïÈ¡×ÊÔ´£¬Ö»½èÓÃ²»¼ÆÊı¡£°üÃ»¼ÓÔØÊ±·µ»Ø null ²¢ÌáÊ¾¡£
-    /// Õı³£Ê±ĞòÏÂ£¨µÈ onBundlesLoaded ÔÙÈ¡£©³£×¤°üÒ»¶¨ÒÑ¾­¾ÍĞ÷£¬²»»á×ßµ½ÌáÊ¾·ÖÖ§¡£
+    /// ä»å·²åŠ è½½çš„åŒ…é‡Œå–èµ„æºï¼Œåªå€Ÿç”¨ä¸è®¡æ•°ã€‚åŒ…æ²¡åŠ è½½æ—¶è¿”å› null å¹¶æç¤ºã€‚
+    /// æ­£å¸¸æ—¶åºä¸‹ï¼ˆç­‰ onBundlesLoaded å†å–ï¼‰å¸¸é©»åŒ…ä¸€å®šå·²ç»å°±ç»ªï¼Œä¸ä¼šèµ°åˆ°æç¤ºåˆ†æ”¯ã€‚
     /// </summary>
     public T GetAsset<T>(string bundleName, string fileName) where T : UnityEngine.Object
     {
         if (!assetBundles.TryGetValue(bundleName, out AssetBundle ab))
         {
-            Debug.LogWarning($"{bundleName} ÉĞÎ´¼ÓÔØ£¬GetAsset Ö»ÄÜ´ÓÒÑ¼ÓÔØµÄ°üÀïÈ¡£º\n" +
-                             "³£×¤°üÇëÈ·ÈÏÒÑÌî½ø CommonBundleLoader£¬²¢µÈ onBundlesLoaded ºóÔÙÈ¡ÓÃ£»\n" +
-                             "³¡¾°°üÇëÈ·ÈÏ±¾³¡¾°µÄ SceneBundleLoader ÒÑ¼ÓÔØÍê³É£¨IsReady£©¡£");
+            Debug.LogWarning($"{bundleName} å°šæœªåŠ è½½ï¼ŒGetAsset åªèƒ½ä»å·²åŠ è½½çš„åŒ…é‡Œå–ï¼š\n" +
+                             "å¸¸é©»åŒ…è¯·ç¡®è®¤å·²å¡«è¿› CommonBundleLoaderï¼Œå¹¶ç­‰ onBundlesLoaded åå†å–ç”¨ï¼›\n" +
+                             "åœºæ™¯åŒ…è¯·ç¡®è®¤æœ¬åœºæ™¯çš„ SceneBundleLoader å·²åŠ è½½å®Œæˆï¼ˆIsReadyï¼‰ã€‚");
             return null;
         }
 
         return ab.LoadAsset<T>(fileName);
     }
 
-    /// <summary>³£×¤°üÈ«²¿¼ÓÔØÍê³ÉºóÓÉ CommonBundleLoader µ÷ÓÃ£¬ÖØ¸´µ÷ÓÃÎŞĞ§</summary>
+    /// <summary>å¸¸é©»åŒ…å…¨éƒ¨åŠ è½½å®Œæˆåç”± CommonBundleLoader è°ƒç”¨ï¼Œé‡å¤è°ƒç”¨æ— æ•ˆ</summary>
     public void NotifyBundlesLoaded()
     {
         if (isBundlesLoaded)
@@ -457,7 +457,7 @@ public class Downloader : Singleton<Downloader>
         }
 
         isBundlesLoaded = true;
-        Debug.Log("³£×¤×ÊÔ´È«²¿¾ÍĞ÷£¬ÒµÎñ¿ÉÒÔ¿ªÊ¼ÁË");
+        Debug.Log("å¸¸é©»èµ„æºå…¨éƒ¨å°±ç»ªï¼Œä¸šåŠ¡å¯ä»¥å¼€å§‹äº†");
         onBundlesLoaded?.Invoke();
     }
 
@@ -465,7 +465,7 @@ public class Downloader : Singleton<Downloader>
     {
         if (!refCounts.TryGetValue(bundleName, out int count))
         {
-            Debug.Log("ÎŞ·¨ÊÍ·Å²»´æÔÚµÄAssetBundle");
+            Debug.Log("æ— æ³•é‡Šæ”¾ä¸å­˜åœ¨çš„AssetBundle");
             return;
         }
 
@@ -473,7 +473,7 @@ public class Downloader : Singleton<Downloader>
         if (count > 0)
         {
             refCounts[bundleName] = count;
-            Debug.Log($"{bundleName} ¸Ã°üÈÔÓĞÒıÓÃ£¬Ôİ²»ÊÍ·Å,µ±Ç°ÒıÓÃÊı{count}");
+            Debug.Log($"{bundleName} è¯¥åŒ…ä»æœ‰å¼•ç”¨ï¼Œæš‚ä¸é‡Šæ”¾,å½“å‰å¼•ç”¨æ•°{count}");
             return;
         }
 
@@ -483,7 +483,7 @@ public class Downloader : Singleton<Downloader>
         {
             ab.Unload(unloadAllLoadeObjects);
             assetBundles.Remove(bundleName);
-            Debug.Log($"{bundleName} Ä¿±ê°üÒÑ±»ÊÍ·Å");
+            Debug.Log($"{bundleName} ç›®æ ‡åŒ…å·²è¢«é‡Šæ”¾");
         }
 
         foreach (string dependence in unityManifest.GetAllDependencies(bundleName))
@@ -494,11 +494,11 @@ public class Downloader : Singleton<Downloader>
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();   // Çåµô Singleton ÀïµÄ¾²Ì¬ÒıÓÃ
+        base.OnDestroy();   // æ¸…æ‰ Singleton é‡Œçš„é™æ€å¼•ç”¨
 
         if (masterBundle != null)
         {
-            masterBundle.Unload(true);   // Ö÷°ü²»ÔÚ×ÖµäÀï£¬µ¥¶ÀÊÍ·Å
+            masterBundle.Unload(true);   // ä¸»åŒ…ä¸åœ¨å­—å…¸é‡Œï¼Œå•ç‹¬é‡Šæ”¾
             masterBundle = null;
             unityManifest = null;
         }
