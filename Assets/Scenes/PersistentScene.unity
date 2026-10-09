@@ -1335,6 +1335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   commonBundles:
   - lua
+  - ui_sprite
 --- !u!4 &1491502484
 Transform:
   m_ObjectHideFlags: 0

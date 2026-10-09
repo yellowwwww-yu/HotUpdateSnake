@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2205000691
+CRC: 4123847281
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 07a48ad4137fc53a93c6e6d1bd307ceb
+    Hash: 37d9ae25be470b2bf7a6b71bd71ad30e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5ad03499b0becdc8ae38af4ad2508cf2
+    Hash: 759f1c4fab265416301dde709fbd7ed4
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 07a48ad4137fc53a93c6e6d1bd307ceb
+    Hash: 37d9ae25be470b2bf7a6b71bd71ad30e
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -26,6 +26,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
 - Class: 114
@@ -69,4 +71,5 @@ Assets:
 - Assets/Prefab/UI/UIPanel_Lobby.prefab
 - Assets/Prefab/UI/UIPanel_Login.prefab
 - Assets/Prefab/UI/UIPanel_Rank.prefab
-Dependencies: []
+Dependencies:
+- "E:/Unity-project/\u70ED\u66F4\u65B0\u8D2A\u5403\u86C7/AssetBundles/PC/ui_sprite"

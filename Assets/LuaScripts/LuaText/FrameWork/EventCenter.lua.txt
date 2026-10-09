@@ -20,9 +20,11 @@ function EventCenter.Off(name, callback)
     end
 
     local set = Liseners[name]
-    if set then
-        set[callback] = nil
+    if not set then
+        return
     end
+
+    set[callback] = nil
     
     if next(set) == nil then
         Liseners[name] = nil
@@ -35,6 +37,10 @@ function EventCenter.Fire(name, ...)
     end
 
     local set = Liseners[name]
+
+    if not set then
+        return
+    end
 
     local snapshot = {}
     for k, v in pairs(set) do

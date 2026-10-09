@@ -87,6 +87,16 @@ public class Downloader : Singleton<Downloader>
         StartDownload();   // 里面会隐藏重试按钮，不用再单独 SetActive(false)
     }
 
+    private void Start()
+    {
+        // 把自己交给 Lua，供 Lua 侧取资源（Downloader:GetSprite）。
+        // 放 Start 不放 Awake：LuaManager 也是单例，Awake 的执行顺序不保证。
+        if (LuaManager.Instance != null)
+        {
+            LuaManager.Instance.Inject("Downloader", this);
+        }
+    }
+
     /// <summary>
     /// 启动下载。正在下载或已经下完时重复调用无效，失败后业务可以再调它重试。
     /// 重试是重新走一遍流程，已经下好的包会在对比阶段命中缓存，只补缺的那几个。
@@ -446,6 +456,16 @@ public class Downloader : Singleton<Downloader>
         }
 
         return ab.LoadAsset<T>(fileName);
+    }
+
+    /// <summary>
+    /// 给 Lua 用的精灵取用口。
+    /// Lua 调泛型方法要经过 xlua.get_generic_method，绕；这里开个非泛型直口。
+    /// 只从已加载的包里借，不加载、不计数 —— 与 GetAsset 行为一致。
+    /// </summary>
+    public UnityEngine.Sprite GetSprite(string bundleName, string fileName)
+    {
+        return GetAsset<UnityEngine.Sprite>(bundleName, fileName);
     }
 
     /// <summary>常驻包全部加载完成后由 CommonBundleLoader 调用，重复调用无效</summary>
