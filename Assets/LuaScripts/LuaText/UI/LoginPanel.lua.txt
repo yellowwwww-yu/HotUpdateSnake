@@ -15,7 +15,8 @@ local Txt_Tip
 
 local specialAccount = "[!@#$%%^&*() ]"
 local specialPassword = "[!@#$%%^&*() ]"
-local passwordLimit = 6
+local passwordLimitMin = 6
+local passwordLimitMax = 12
 
 local accountAccepted = false
 local passwordAccepted = false
@@ -47,11 +48,14 @@ function LoginPanel:OnOpen(data)
     Txt_Password_Tip.text = ""
     Txt_Tip.text = ""
 
-    Input_Password.characterLimit = passwordLimit
+    Input_Password.characterLimit = passwordLimitMax
 end
 
 function LoginPanel:OnAccountChanged(value)
-    if string.find(value, specialAccount) then
+    if value == "" then
+        Txt_Account_Tip.text = "账号不能为空"
+        accountAccepted = false
+    elseif string.find(value, specialAccount) then
         Txt_Account_Tip.text = "账号里不能包含特殊字符"..specialAccount
         accountAccepted = false
     else
@@ -61,14 +65,17 @@ function LoginPanel:OnAccountChanged(value)
 end
 
 function LoginPanel:OnPasswordChanged(value)
-    if string.find(value, specialPassword) then
+    if value == "" then
+        Txt_Password_Tip.text = "密码不能为空"
+        passwordAccepted = false
+    elseif string.find(value, specialPassword) then
         Txt_Password_Tip.text = "密码里不能包含特殊字符"..specialPassword
         passwordAccepted = false
     elseif string.find(value, "[\228-\233][\128-\191][\128-\191]") then
         Txt_Password_Tip.text = "密码里不能包含中文字符"
         passwordAccepted = false
-    elseif #value < passwordLimit then
-        Txt_Password_Tip.text = "密码长度不能少于"..passwordLimit.."个字符"
+    elseif #value < passwordLimitMin then
+        Txt_Password_Tip.text = "密码长度不能少于"..passwordLimitMin.."个字符"
         passwordAccepted = false
     else
         Txt_Password_Tip.text = ""
@@ -112,6 +119,9 @@ function LoginPanel:OnClickLogin()
     UIManager:Open("LobbyPanel")
     if UIManager:IsOpen("LoginPanel") then
         UIManager:Close("LoginPanel")
+    else
+        Txt_Tip.color = Color.red
+        Txt_Tip.text = "登录失败, 请重试"
     end
 end
 
