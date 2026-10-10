@@ -14,7 +14,7 @@ local SPRITE_BUNDLE = "ui_sprite"
 -- 以后按 Avatar_0 / Avatar_1 命名的话，只改这一行。
 -- 这是表现层的知识（资源怎么命名），不进 Model。
 local function AvatarAssetName(id)
-    return string.format("Avatars_%02d", id + 1)
+    return string.format("Avatars_%02d", id)
 end
 
 -- UIManager 打开面板 → UIPanel.CallOpen → 到这里

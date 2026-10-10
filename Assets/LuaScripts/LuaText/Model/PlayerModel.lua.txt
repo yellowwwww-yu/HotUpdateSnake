@@ -12,7 +12,7 @@ PlayerModel.EVENT_CHANGED = "PlayerModel.Changed"
 -- avatar 存的是头像编号（业务数据），不是资源名——资源名属于表现层，在 Presenter 里映射。
 local NICK   = "蛙蛙"
 local LEVEL  = 1
-local AVATAR = 0
+local AVATAR = 1
 
 -- 数据入口：改动一律走这里，改完广播一次
 function PlayerModel:SetProfile(nick, level, avatar)

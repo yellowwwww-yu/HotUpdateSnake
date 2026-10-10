@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.coplaydev.unity-mcp": "file:E:/WorkBuddy_OutPut/热更新贪吃蛇/com.coplaydev.unity-mcp-10.0.0.tgz",
     "com.unity.collab-proxy": "2.12.4",
     "com.unity.feature.2d": "2.0.1",
     "com.unity.ide.rider": "3.0.36",

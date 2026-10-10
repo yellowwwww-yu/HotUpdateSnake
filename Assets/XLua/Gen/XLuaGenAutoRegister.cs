@@ -22,6 +22,18 @@ namespace XLua.CSObjectWrap
         static void wrapInit0(LuaEnv luaenv, ObjectTranslator translator)
         {
         
+            translator.DelayWrapLoader(typeof(InfiniteScroll), InfiniteScrollWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(LocalPlayerData), LocalPlayerDataWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(LocalAccountData), LocalAccountDataWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(LocalAccountFile), LocalAccountFileWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(Tutorial.BaseClass), TutorialBaseClassWrap.__Register);
         
         
@@ -35,6 +47,9 @@ namespace XLua.CSObjectWrap
         
         
             translator.DelayWrapLoader(typeof(Tutorial.DerivedClassExtensions), TutorialDerivedClassExtensionsWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(Framework.SceneLoader), FrameworkSceneLoaderWrap.__Register);
         
         
             translator.DelayWrapLoader(typeof(Framework.UI.UIBind), FrameworkUIUIBindWrap.__Register);

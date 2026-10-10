@@ -21,10 +21,12 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(Framework.UI.UIBind);
-			Utils.BeginObjectRegister(type, L, translator, 0, 2, 0, 0);
+			Utils.BeginObjectRegister(type, L, translator, 0, 4, 0, 0);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Get", _m_Get);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "BindClick", _m_BindClick);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "BindInputChanged", _m_BindInputChanged);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UnBindInputChanged", _m_UnBindInputChanged);
 			
 			
 			
@@ -119,6 +121,63 @@ namespace XLua.CSObjectWrap
                     string _method = LuaAPI.lua_tostring(L, 3);
                     
                     gen_to_be_invoked.BindClick( _key, _method );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_BindInputChanged(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                Framework.UI.UIBind gen_to_be_invoked = (Framework.UI.UIBind)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    string _key = LuaAPI.lua_tostring(L, 2);
+                    string _method = LuaAPI.lua_tostring(L, 3);
+                    
+                    gen_to_be_invoked.BindInputChanged( _key, _method );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_UnBindInputChanged(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                Framework.UI.UIBind gen_to_be_invoked = (Framework.UI.UIBind)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    string _key = LuaAPI.lua_tostring(L, 2);
+                    
+                    gen_to_be_invoked.UnBindInputChanged( _key );
                     
                     
                     

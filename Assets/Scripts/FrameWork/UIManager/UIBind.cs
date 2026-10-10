@@ -103,6 +103,43 @@ namespace Framework.UI
             }
         }
 
+        public void BindInputChanged(string key, string method)
+        {
+            GameObject inputObj = Get(key);
+            if(inputObj == null)
+            {
+                Debug.Log($"未找到{key}");
+                return;
+            }
+            InputField input = inputObj.GetComponent<InputField>();
+            if(input == null)
+            {
+                Debug.Log($"{key}上没有InputField组件");
+                return;
+            }
+
+            input.onValueChanged.RemoveAllListeners();
+            input.onValueChanged.AddListener(value => CallModule(method, value));
+        }
+
+        public void UnBindInputChanged(string key)
+        {
+            GameObject inputObj = Get(key);
+            if(inputObj == null)
+            {
+                Debug.Log($"未找到{key}");
+                return;
+            }
+            InputField input = inputObj.GetComponent<InputField>();
+            if(input == null)
+            {
+                Debug.Log($"{key}上没有InputField组件");
+                return;
+            }
+
+            input.onValueChanged.RemoveAllListeners();
+        }
+
         /// <summary>调用 Lua 模块上的方法，方法不存在时返回 false</summary>
         protected bool CallModule(string method, params object[] args)
         {

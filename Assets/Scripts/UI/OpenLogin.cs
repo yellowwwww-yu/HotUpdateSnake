@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Framework.UI;
 using UnityEngine;
 
-public class OpenLobby : MonoBehaviour
+public class OpenLogin : MonoBehaviour
 {
     private void Start()
     {
@@ -12,7 +12,7 @@ public class OpenLobby : MonoBehaviour
 
     private void Open()
     {
-        UIManager.Instance.Open("LobbyPanel");
+        UIManager.Instance.Open("LoginPanel");
     }
 
     private void OnDestroy()
