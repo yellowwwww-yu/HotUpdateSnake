@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 363999309
+CRC: 2047786535
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1f8dfa2acc59b2b4b77b2dc56dcbc50d
+    Hash: 7aeffb975af38047b9a5b11bdcdd93d4
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e751ae7fe5a284b4d43100cb0026ea03
+    Hash: c6c9e4a777840c2bab1aaea90458050a
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 1f8dfa2acc59b2b4b77b2dc56dcbc50d
+    Hash: 7aeffb975af38047b9a5b11bdcdd93d4
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -21,23 +21,35 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 - Class: 114
-  Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f3b0a44aad510d540a3c64dcda123372, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 963e85db7b872e84fa645f40be8bdb28, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 972035b1edf92a9478d4bfb564bdc5d8, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 28305d31de1565c4a868ce124cf9dcc7, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: e0b0b4f6fc3e6324aaad8384bb64d5c5, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: a6ec4115d15c6254387dd906e385d98e, type: 3}
 - Class: 115
@@ -74,10 +86,17 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.Navigation
 - AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Slider/SliderEvent
+- AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.SpriteState
 Assets:
-- Assets/Prefab/UI/UIPanel_Lobby.prefab
-- Assets/Prefab/UI/UIPanel_Login.prefab
-- Assets/Prefab/UI/UIPanel_Rank.prefab
+- Assets/Prefab/UI/Popups/ItemOperatePopup.prefab
+- Assets/Prefab/UI/Panels/UIPanel_Bag.prefab
+- Assets/Prefab/UI/Panels/UIPanel_Lobby.prefab
+- Assets/Prefab/UI/BagCell.prefab
+- Assets/Prefab/UI/Panels/UIPanel_Login.prefab
+- Assets/Prefab/UI/Panels/UIPanel_Rank.prefab
+- Assets/Prefab/UI/Panels/LoadingProgressBar.prefab
+- Assets/Prefab/UI/Popups/DescriptionPopup.prefab
 Dependencies:
 - "E:/Unity-project/\u70ED\u66F4\u65B0\u8D2A\u5403\u86C7/AssetBundles/PC/ui_sprite"

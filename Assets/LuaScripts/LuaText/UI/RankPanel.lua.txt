@@ -9,7 +9,7 @@ local RankPanel = PanelBase:Create()
 local RANK_COLOR = { "BA7517", "5F5E5A", "993C1D" }
 
 -- UIManager 打开面板 → UIPanel.CallOpen → 到这里
-function RankPanel:OnOpen(data)
+function RankPanel:OnOpen()
     -- Presenter → View：绑定控件
     self.view:BindClick("Btn_Close", "OnClickClose")
 
@@ -17,8 +17,8 @@ function RankPanel:OnOpen(data)
     -- EventCenter 广播时只传数据、不传 self（内部是 pcall(callback, data)），
     -- 所以这里用闭包把面板带进去，回调里的 self 才是对的。
     -- 退订由 UIPanel.CallClose → OnCloseInternal → ReleaseEvents 兜底。
-    self:Listen(RankModel.EVENT_CHANGED, function()
-        self:OnModelChanged()
+    self:Listen(RankModel.EVENT_CHANGED, function(ranked)
+        self:OnModelChanged(ranked)
     end)
 
     -- Presenter → Model：请求数据，数据回来走 OnModelChanged
@@ -26,7 +26,7 @@ function RankPanel:OnOpen(data)
 end
 
 -- 面板还开着时被再 Open 一次走这条，重新拉一次榜单
-function RankPanel:OnRefresh(data)
+function RankPanel:OnRefresh()
     RankModel:Request()
 end
 
@@ -36,26 +36,26 @@ function RankPanel:OnClickClose()
 end
 
 -- Model → Presenter 的入口
-function RankPanel:OnModelChanged()
-    self:Refresh()
+function RankPanel:OnModelChanged(ranked)
+    self:Refresh(ranked)
 end
 
 -- Presenter → View：把 Model 的榜单搬到列表上
-function RankPanel:Refresh()
+function RankPanel:Refresh(ranked)
     local list = self.view:Get("List")
 
     if list == nil then
         return
     end
 
-    local scroll = list:GetComponent("InfiniteScroll")
+    local rankView = list:GetComponent("RankListView")
 
-    if scroll == nil then
-        print("[Rank] List 节点上没有挂 InfiniteScroll")
+    if rankView == nil then
+        print("[Rank] List 节点上没有挂 RankListView")
         return
     end
 
-    scroll:SetDatas(self:ToViewDatas(RankModel:Get()))
+    rankView:SetDatas(self:ToViewDatas(ranked))
 end
 
 -- 榜单 -> 列表要的一行三列：名次、名字、分数。

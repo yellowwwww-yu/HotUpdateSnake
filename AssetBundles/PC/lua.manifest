@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2205223944
+CRC: 1615968870
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 822e33fe0eddb1c30e2cb1d51e5aa748
+    Hash: ceadf52ab87efd81e50743bf109ace3c
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 822e33fe0eddb1c30e2cb1d51e5aa748
+    Hash: ceadf52ab87efd81e50743bf109ace3c
 HashAppended: 0
 ClassTypes:
 - Class: 49
@@ -17,13 +17,17 @@ ClassTypes:
 SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/LuaScripts/LuaText/UI/LoginPanel.lua.txt
+- Assets/LuaScripts/LuaText/Model/BagModel.lua.txt
 - Assets/LuaScripts/LuaText/FrameWork/EventCenter.lua.txt
+- Assets/LuaScripts/LuaText/UI/DescriptionPopup.lua.txt
 - Assets/LuaScripts/LuaText/Main.lua.txt
 - Assets/LuaScripts/LuaText/UI/LobbyPanel.lua.txt
 - Assets/LuaScripts/LuaText/UI/PanelBase.lua.txt
 - Assets/LuaScripts/LuaText/UI/RankPanel.lua.txt
 - Assets/LuaScripts/LuaText/Model/PlayerModel.lua.txt
 - Assets/LuaScripts/LuaText/Game/Snake.lua.txt
+- Assets/LuaScripts/LuaText/UI/ItemOperatePopup.lua.txt
 - Assets/LuaScripts/LuaText/Game/SnakeDemo.lua.txt
 - Assets/LuaScripts/LuaText/Model/RankModel.lua.txt
+- Assets/LuaScripts/LuaText/UI/BagPanel.lua.txt
 Dependencies: []

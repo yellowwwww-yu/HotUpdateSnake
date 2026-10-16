@@ -140,6 +140,11 @@ public class LuaManager : Singleton<LuaManager>
         luaEnv.Global.Set(name, obj);
     }
 
+    public LuaTable NewLuaTable()
+    {
+        return luaEnv.NewTable();
+    }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();   // 清掉 Singleton 里的静态引用

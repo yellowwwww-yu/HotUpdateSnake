@@ -44,9 +44,8 @@ namespace Framework.UI
         private readonly Dictionary<string, UIPanel> opened = new Dictionary<string, UIPanel>();
         private readonly Dictionary<string, UIPanel> cached = new Dictionary<string, UIPanel>();
 
-        // 记录进入缓存的先后顺序。这里只淘汰"最早缓存的"，
-        // 不需要精确的 LRU，用队列就够。
-        private readonly Queue<string> cacheOrder = new Queue<string>();
+        // 按归还缓存的先后淘汰；借出时需要移除对应顺序记录。
+        private readonly LinkedList<string> cacheOrder = new LinkedList<string>();
 
         protected override void Awake()
         {
@@ -96,17 +95,17 @@ namespace Framework.UI
 
             // 缓存里有就拿回来用，没有才创建
             UIPanel panel;
-            if (cached.TryGetValue(name, out panel) && panel != null)
+            if (cached.TryGetValue(name, out panel))
             {
                 cached.Remove(name);
+                cacheOrder.Remove(name);
+                // 处理缓存对象被外部销毁后的遗留引用，再按需重建。
+                if (panel == null) ReleaseBundle(entry);
             }
-            else
+            if (panel == null)
             {
                 panel = Create(entry);
-                if (panel == null)
-                {
-                    return;
-                }
+                if (panel == null) return;
             }
 
             panel.gameObject.SetActive(true);
@@ -162,7 +161,7 @@ namespace Framework.UI
             }
 
             // LoadBundle 让包引用 +1，GetAsset 只借不计数。
-            // 记账规则是：面板实例活着，这个包就被引用着，关闭时对称减 1。
+            // 实例活着（包括缓存）就保留引用；实际销毁或淘汰时才减 1。
             if (Downloader.Instance.LoadBundle(entry.bundle) == null)
             {
                 Debug.LogError($"[UI] 面板 {entry.name} 的包 {entry.bundle} 加载失败");
@@ -211,26 +210,19 @@ namespace Framework.UI
         private void AddToCache(string name, UIPanel panel)
         {
             cached[name] = panel;
-            cacheOrder.Enqueue(name);
+            cacheOrder.Remove(name);
+            cacheOrder.AddLast(name);
 
-            // 用 while 不用 if：容量被调小过的话，一次可能淘汰好几个
-            while (cacheOrder.Count > cacheCapacity)
+            int capacity = Math.Max(0, cacheCapacity);
+            while (cached.Count > capacity)
             {
-                string oldest = cacheOrder.Dequeue();
-
-                if (!cached.TryGetValue(oldest, out UIPanel old))
-                {
-                    continue;   // 这个名字已经被主动移出缓存了
-                }
-
+                string oldest = cacheOrder.First.Value;
+                cacheOrder.RemoveFirst();
+                if (!cached.TryGetValue(oldest, out UIPanel old)) continue;
                 cached.Remove(oldest);
-                Debug.Log($"[UI] 缓存超过 {cacheCapacity} 个，销毁最早缓存的 {oldest}");
-                Destroy(old.gameObject);
-
-                if (entries.TryGetValue(oldest, out PanelEntry e))
-                {
-                    ReleaseBundle(e);
-                }
+                Debug.Log($"[UI] 缓存超过 {capacity} 个，销毁最早缓存的 {oldest}");
+                if (old != null) Destroy(old.gameObject);
+                if (entries.TryGetValue(oldest, out PanelEntry entry)) ReleaseBundle(entry);
             }
         }
 

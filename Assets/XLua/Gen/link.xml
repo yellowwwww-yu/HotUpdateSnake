@@ -3,7 +3,8 @@
 <linker>
 
 	<assembly fullname="Assembly-CSharp">
-	    <type fullname="InfiniteScroll" preserve="all"/>
+	    <type fullname="BagListView" preserve="all"/>
+		<type fullname="RankListView" preserve="all"/>
 		<type fullname="LocalPlayerData" preserve="all"/>
 		<type fullname="LocalAccountData" preserve="all"/>
 		<type fullname="LocalAccountFile" preserve="all"/>
@@ -15,6 +16,7 @@
 		<type fullname="Framework.SceneLoader" preserve="all"/>
 		<type fullname="Framework.UI.UIBind" preserve="all"/>
 		<type fullname="Framework.UI.UIManager" preserve="all"/>
+		<type fullname="Framework.UI.PopupView" preserve="all"/>
 		<type fullname="Framework.Pool.PoolManager" preserve="all"/>
 		<type fullname="Tutorial.DerivedClass+TestEnumInner" preserve="all"/>
 		

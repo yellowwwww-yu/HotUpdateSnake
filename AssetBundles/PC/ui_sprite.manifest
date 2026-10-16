@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 3279699976
+CRC: 2301362592
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 567f2d7f3bdd936f71e119ff50457dcb
+    Hash: 9fa37969436f3197a016da83595d1e87
   TypeTreeHash:
     serializedVersion: 2
     Hash: 2d8df09e698f722ada1caa03d3413830
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 567f2d7f3bdd936f71e119ff50457dcb
+    Hash: 9fa37969436f3197a016da83595d1e87
 HashAppended: 0
 ClassTypes:
 - Class: 28
@@ -18,5 +18,35 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/Premade dialog box small.png
+- Assets/Resources/UI/Sprite sheets/UI Big Play Button.png
+- Assets/Resources/UI/Sprite sheets/Mouse sprites/Catpaw pointing Mouse icon.png
+- Assets/Resources/UI/Sprite sheets/Mouse sprites/Triangle Mouse icon 3.png
+- Assets/Resources/UI/Sprite sheets/Icons/white icons.png
+- Assets/Resources/UI/Sprite sheets/Sprite sheet for Basic Pack.png
+- Assets/Resources/UI/Sprite sheets/Mouse sprites/Triangle Mouse icon 2.png
+- Assets/Resources/UI/Sprite sheets/buttons/Small Square Buttons.png
+- Assets/Resources/UI/Sprite sheets/Setting menu.png
 - Assets/Resources/UI/Avatars_01.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/dialog box small.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/Premade dialog box  big.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/dialog box medium.png
+- Assets/Resources/UI/Items.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/dialog box big.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/Premade dialog box medium.png
+- Assets/Resources/UI/Sprite sheets/Mouse sprites/Catpaw Mouse icon.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/dialog box character finished talking
+  click to continue indicator - spritesheet .png
+- Assets/Resources/UI/Sprite sheets/Mouse sprites/Catpaw holding Mouse icon.png
+- Assets/Resources/UI/Sprite sheets/Icons/special icons/Small Happines-Sadness icons.png
+- Assets/Resources/UI/Sprite sheets/Mouse sprites/Triangle Mouse icon 1.png
+- Assets/Resources/UI/Sprite sheets/buttons/Square Buttons 19x26.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/dialog box.png
+- Assets/Resources/UI/Sprite sheets/Icons/All Icons.png
+- Assets/Resources/UI/Sprite sheets/UI Settings Buttons.png
+- Assets/Resources/UI/Sprite sheets/buttons/Square Buttons 26x26.png
+- Assets/Resources/UI/Sprite sheets/Dialouge UI/Emotes/Teemo Basic emote animations
+  sprite sheet.png
+- Assets/Resources/UI/Sprite sheets/Icons/special icons/Special Icons.png
+- Assets/Resources/UI/Sprite sheets/buttons/Square Buttons 26x19.png
 Dependencies: []

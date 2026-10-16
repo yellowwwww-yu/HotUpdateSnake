@@ -15,23 +15,22 @@ using System.Collections.Generic;
 namespace XLua.CSObjectWrap
 {
     using Utils = XLua.Utils;
-    public class InfiniteScrollWrap 
+    public class BagListViewWrap 
     {
         public static void __Register(RealStatePtr L)
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			System.Type type = typeof(InfiniteScroll);
-			Utils.BeginObjectRegister(type, L, translator, 0, 3, 1, 1);
+			System.Type type = typeof(BagListView);
+			Utils.BeginObjectRegister(type, L, translator, 0, 4, 0, 0);
 			
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "BindBeforeMove", _m_BindBeforeMove);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UnBindBeforeMove", _m_UnBindBeforeMove);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SetDatas", _m_SetDatas);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "OnDrag", _m_OnDrag);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "OnScroll", _m_OnScroll);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UpdateCount", _m_UpdateCount);
 			
 			
-			Utils.RegisterFunc(L, Utils.GETTER_IDX, "datas", _g_get_datas);
-            
-			Utils.RegisterFunc(L, Utils.SETTER_IDX, "datas", _s_set_datas);
-            
+			
+			
 			
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
@@ -55,7 +54,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					var gen_ret = new InfiniteScroll();
+					var gen_ret = new BagListView();
 					translator.Push(L, gen_ret);
                     
 					return 1;
@@ -65,7 +64,7 @@ namespace XLua.CSObjectWrap
 			catch(System.Exception gen_e) {
 				return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
 			}
-            return LuaAPI.luaL_error(L, "invalid arguments to InfiniteScroll constructor!");
+            return LuaAPI.luaL_error(L, "invalid arguments to BagListView constructor!");
             
         }
         
@@ -77,6 +76,61 @@ namespace XLua.CSObjectWrap
         
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_BindBeforeMove(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                BagListView gen_to_be_invoked = (BagListView)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    BagBeforeMoveCallBack _callback = translator.GetDelegate<BagBeforeMoveCallBack>(L, 2);
+                    
+                    gen_to_be_invoked.BindBeforeMove( _callback );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_UnBindBeforeMove(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                BagListView gen_to_be_invoked = (BagListView)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    
+                    gen_to_be_invoked.UnBindBeforeMove(  );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _m_SetDatas(RealStatePtr L)
         {
 		    try {
@@ -84,10 +138,23 @@ namespace XLua.CSObjectWrap
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
             
             
-                InfiniteScroll gen_to_be_invoked = (InfiniteScroll)translator.FastGetCSObj(L, 1);
+                BagListView gen_to_be_invoked = (BagListView)translator.FastGetCSObj(L, 1);
             
             
-                
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TTABLE)&& LuaTypes.LUA_TBOOLEAN == LuaAPI.lua_type(L, 3)) 
+                {
+                    XLua.LuaTable _table = (XLua.LuaTable)translator.GetObject(L, 2, typeof(XLua.LuaTable));
+                    bool _keepPosition = LuaAPI.lua_toboolean(L, 3);
+                    
+                    gen_to_be_invoked.SetDatas( _table, _keepPosition );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TTABLE)) 
                 {
                     XLua.LuaTable _table = (XLua.LuaTable)translator.GetObject(L, 2, typeof(XLua.LuaTable));
                     
@@ -102,52 +169,27 @@ namespace XLua.CSObjectWrap
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }
             
+            return LuaAPI.luaL_error(L, "invalid arguments to BagListView.SetDatas!");
+            
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_OnDrag(RealStatePtr L)
+        static int _m_UpdateCount(RealStatePtr L)
         {
 		    try {
             
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
             
             
-                InfiniteScroll gen_to_be_invoked = (InfiniteScroll)translator.FastGetCSObj(L, 1);
+                BagListView gen_to_be_invoked = (BagListView)translator.FastGetCSObj(L, 1);
             
             
                 
                 {
-                    UnityEngine.EventSystems.PointerEventData _eventData = (UnityEngine.EventSystems.PointerEventData)translator.GetObject(L, 2, typeof(UnityEngine.EventSystems.PointerEventData));
+                    int _id = LuaAPI.xlua_tointeger(L, 2);
+                    int _count = LuaAPI.xlua_tointeger(L, 3);
                     
-                    gen_to_be_invoked.OnDrag( _eventData );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_OnScroll(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-                InfiniteScroll gen_to_be_invoked = (InfiniteScroll)translator.FastGetCSObj(L, 1);
-            
-            
-                
-                {
-                    UnityEngine.EventSystems.PointerEventData _eventData = (UnityEngine.EventSystems.PointerEventData)translator.GetObject(L, 2, typeof(UnityEngine.EventSystems.PointerEventData));
-                    
-                    gen_to_be_invoked.OnScroll( _eventData );
+                    gen_to_be_invoked.UpdateCount( _id, _count );
                     
                     
                     
@@ -163,36 +205,7 @@ namespace XLua.CSObjectWrap
         
         
         
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _g_get_datas(RealStatePtr L)
-        {
-		    try {
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			
-                InfiniteScroll gen_to_be_invoked = (InfiniteScroll)translator.FastGetCSObj(L, 1);
-                translator.Push(L, gen_to_be_invoked.datas);
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            return 1;
-        }
         
-        
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _s_set_datas(RealStatePtr L)
-        {
-		    try {
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			
-                InfiniteScroll gen_to_be_invoked = (InfiniteScroll)translator.FastGetCSObj(L, 1);
-                gen_to_be_invoked.datas = (string[][])translator.GetObject(L, 2, typeof(string[][]));
-            
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            return 0;
-        }
         
 		
 		
