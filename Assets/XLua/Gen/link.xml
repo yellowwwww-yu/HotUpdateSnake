@@ -3,7 +3,11 @@
 <linker>
 
 	<assembly fullname="Assembly-CSharp">
-	    <type fullname="BagListView" preserve="all"/>
+	    <type fullname="LocalBagItemData" preserve="all"/>
+		<type fullname="LocalBagData" preserve="all"/>
+		<type fullname="LocalBagLoadResult" preserve="all"/>
+		<type fullname="LocalBagFile" preserve="all"/>
+		<type fullname="BagListView" preserve="all"/>
 		<type fullname="RankListView" preserve="all"/>
 		<type fullname="LocalPlayerData" preserve="all"/>
 		<type fullname="LocalAccountData" preserve="all"/>

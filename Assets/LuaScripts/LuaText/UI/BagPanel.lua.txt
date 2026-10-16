@@ -3,9 +3,11 @@ local BagModel = require("Model.BagModel")
 
 local BagPanel = PanelBase:Create()
 local BagView
+local Txt_Tip
 
 function BagPanel:OnOpen()
     BagView = self.view:Get("List"):GetComponent("BagListView")
+    Txt_Tip = self.view:Get("Txt_Tip"):GetComponent("Text")
     self.view:BindClick("Btn_Close", "OnClickClose")
 
     BagView:BindBeforeMove(function()
@@ -16,6 +18,9 @@ function BagPanel:OnOpen()
     self:Listen(BagModel.EVENT_CHANGED, function(items, id, removed)
         self:OnModelChanged(items, id, removed)
     end)
+    self:Listen(BagModel.EVENT_ERROR, function(message)
+        Txt_Tip.text = message
+    end)
     BagModel:Request()
 end
 
@@ -24,6 +29,7 @@ function BagPanel:OnRefresh()
 end
 
 function BagPanel:OnModelChanged(items, id, removed)
+    Txt_Tip.text = ""
     if id ~= nil and not removed then
         local item = BagModel:GetById(id)
         if item ~= nil then
@@ -44,6 +50,7 @@ function BagPanel:OnClickClose()
 end
 
 function BagPanel:OnClose()
+    Txt_Tip.text = ""
     BagView:UnBindBeforeMove()
     UIManager:Close("DescriptionPopup")
     UIManager:Close("ItemOperatePopup")

@@ -1,10 +1,12 @@
 local EventCenter = require("FrameWork.EventCenter")
+local LocalBagFile = CS.LocalBagFile
 
 local BagModel = {}
-
 BagModel.EVENT_CHANGED = "BagModel.Changed"
+BagModel.EVENT_ERROR = "BagModel.Error"
 
-local Mock_Items = {
+-- 物品资料和首次发放模板；运行时不会修改这张表。
+local InitialItems = {
     { id = 1, name = "道具1", count = 10, desc = "这是道具1的描述" },
     { id = 2, name = "道具2", count = 5, desc = "这是道具2的描述" },
     { id = 3, name = "道具3", count = 20, desc = "这是道具3的描述" },
@@ -32,12 +34,122 @@ local Mock_Items = {
     { id = 25, name = "道具25", count = 23, desc = "这是道具25的描述" },
 }
 
+local Definitions = {}
+for _, item in ipairs(InitialItems) do
+    Definitions[item.id] = item
+end
+
+local Items = {}
+local Account
+
+local function CopyItems(source)
+    local copied = {}
+    local ids = {}
+    for _, item in ipairs(source) do
+        local definition = Definitions[item.id]
+        if definition == nil then
+            return nil, "找不到物品定义，ID：" .. tostring(item.id)
+        end
+        if type(item.count) ~= "number" or item.count <= 0
+            or item.count % 1 ~= 0 or item.count > 2147483647 then
+            return nil, "物品数量无效，ID：" .. tostring(item.id)
+        end
+        if ids[item.id] then
+            return nil, "物品ID重复：" .. tostring(item.id)
+        end
+        ids[item.id] = true
+        copied[#copied + 1] = {
+            id = item.id,
+            name = definition.name,
+            count = item.count,
+            desc = definition.desc
+        }
+    end
+    return copied
+end
+
+local function SaveItems(account, items)
+    local data = LocalBagFile.Create(account)
+    for _, item in ipairs(items) do
+        local entry = CS.LocalBagItemData()
+        entry.id = item.id
+        entry.count = item.count
+        data.items:Add(entry)
+    end
+    return LocalBagFile.Save(data)
+end
+
+local function Fail(message)
+    EventCenter.Fire(BagModel.EVENT_ERROR, message)
+    return false, message
+end
+
+local function Commit(source, id, removed)
+    if Account == nil then
+        return Fail("背包尚未加载，请重新登录")
+    end
+
+    local candidate, error = CopyItems(source)
+    if candidate == nil then
+        return Fail(error)
+    end
+    error = SaveItems(Account, candidate)
+    if error ~= nil then
+        return Fail(error)
+    end
+
+    -- 文件保存成功后，才提交内存数据并通知界面。
+    Items = candidate
+    EventCenter.Fire(BagModel.EVENT_CHANGED, Items, id, removed)
+    return true
+end
+
+function BagModel:Clear()
+    Account = nil
+    Items = {}
+    EventCenter.Fire(self.EVENT_CHANGED, Items)
+end
+
+function BagModel:Load(account)
+    -- 先清理旧账号，读取失败时不能继续操作之前的背包。
+    self:Clear()
+    local result = LocalBagFile.Load(account)
+    if not result.success then
+        return false, result.error
+    end
+
+    local source = InitialItems
+    if result.data ~= nil then
+        source = {}
+        for index = 0, result.data.items.Count - 1 do
+            local item = result.data.items[index]
+            source[#source + 1] = { id = item.id, count = item.count }
+        end
+    end
+
+    local loaded, error = CopyItems(source)
+    if loaded == nil then
+        return false, error
+    end
+    if result.data == nil then
+        error = SaveItems(account, loaded)
+        if error ~= nil then
+            return false, error
+        end
+    end
+
+    Account = account
+    Items = loaded
+    EventCenter.Fire(self.EVENT_CHANGED, Items)
+    return true
+end
+
 function BagModel:Get()
-    return Mock_Items
+    return Items
 end
 
 function BagModel:GetById(id)
-    for index, item in ipairs(Mock_Items) do
+    for index, item in ipairs(Items) do
         if item.id == id then
             return item, index
         end
@@ -45,27 +157,34 @@ function BagModel:GetById(id)
 end
 
 function BagModel:SetItems(items)
-    Mock_Items = items or {}
-    EventCenter.Fire(self.EVENT_CHANGED, Mock_Items)
+    return Commit(items or {})
 end
 
 function BagModel:Request()
-    self:SetItems(Mock_Items)
+    -- 打开面板只展示已加载的数据，不读盘、不重新发放物品。
+    EventCenter.Fire(self.EVENT_CHANGED, Items)
 end
 
 local function Consume(id)
-    local item, index = BagModel:GetById(id)
-    if item == nil or item.count <= 0 then
-        return false
+    if Account == nil then
+        return Fail("背包尚未加载，请重新登录")
+    end
+    local selected = BagModel:GetById(id)
+    if selected == nil or selected.count <= 0 then
+        return Fail("物品不存在或数量不足")
     end
 
-    item.count = item.count - 1
-    local removed = item.count == 0
-    if removed then
-        table.remove(Mock_Items, index)
+    local candidate = {}
+    for _, item in ipairs(Items) do
+        local count = item.count
+        if item.id == id then
+            count = count - 1
+        end
+        if count > 0 then
+            candidate[#candidate + 1] = { id = item.id, count = count }
+        end
     end
-    EventCenter.Fire(BagModel.EVENT_CHANGED, Mock_Items, id, removed)
-    return true
+    return Commit(candidate, id, selected.count == 1)
 end
 
 function BagModel:Use(id)

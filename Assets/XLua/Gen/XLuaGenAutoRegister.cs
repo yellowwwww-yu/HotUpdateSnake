@@ -22,6 +22,18 @@ namespace XLua.CSObjectWrap
         static void wrapInit0(LuaEnv luaenv, ObjectTranslator translator)
         {
         
+            translator.DelayWrapLoader(typeof(LocalBagItemData), LocalBagItemDataWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(LocalBagData), LocalBagDataWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(LocalBagLoadResult), LocalBagLoadResultWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(LocalBagFile), LocalBagFileWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(BagListView), BagListViewWrap.__Register);
         
         

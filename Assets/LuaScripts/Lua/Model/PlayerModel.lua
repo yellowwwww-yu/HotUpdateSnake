@@ -10,12 +10,16 @@ PlayerModel.EVENT_CHANGED = "PlayerModel.Changed"
 
 -- 本地假数据。11/12 登录接真服务器后，由登录回包调 SetProfile 填充。
 -- avatar 存的是头像编号（业务数据），不是资源名——资源名属于表现层，在 Presenter 里映射。
+local ACCOUNT
 local NICK   = "蛙蛙"
 local LEVEL  = 1
 local AVATAR = 1
 
 -- 数据入口：改动一律走这里，改完广播一次
-function PlayerModel:SetProfile(nick, level, avatar)
+function PlayerModel:SetProfile(nick, level, avatar, account)
+    if account ~= nil then
+        ACCOUNT = account
+    end
     NICK   = nick
     LEVEL  = level
     AVATAR = avatar
@@ -25,7 +29,7 @@ end
 
 -- Presenter 只通过这个口读数据
 function PlayerModel:Get()
-    return { nick = NICK, level = LEVEL, avatar = AVATAR }
+    return { account = ACCOUNT, nick = NICK, level = LEVEL, avatar = AVATAR }
 end
 
 return PlayerModel

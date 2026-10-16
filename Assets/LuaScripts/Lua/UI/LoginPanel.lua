@@ -1,5 +1,6 @@
 local PanelBase = require("UI.PanelBase")
 local PlayerModel = require("Model.PlayerModel")
+local BagModel = require("Model.BagModel")
 
 local LoginPanel = PanelBase:Create()
 
@@ -111,10 +112,17 @@ function LoginPanel:OnClickLogin()
         Txt_Tip.text = "密码错误"
         return
     end
+    local loaded, error = BagModel:Load(account)
+    if not loaded then
+        Txt_Tip.color = Color.red
+        Txt_Tip.text = error
+        return
+    end
+
     Txt_Tip.color = Color.green
     Txt_Tip.text = "登录成功"
 
-    PlayerModel:SetProfile(player.nick, player.level, player.avatar)
+    PlayerModel:SetProfile(player.nick, player.level, player.avatar, account)
 
     UIManager:Open("LobbyPanel")
     if UIManager:IsOpen("LoginPanel") then
