@@ -1,0 +1,28 @@
+ManifestFileVersion: 0
+CRC: 3526889187
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b7cae6c70198eadac0fa6bf24a2256e1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: fe249c1d427fc51a495bd5520fa55f30
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: b7cae6c70198eadac0fa6bf24a2256e1
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0c76fc3c211e27d48909964ee42386bc, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: AudioCatalog/Entry
+Assets:
+- Assets/Config/AudioCatalog/CommonAudioCatalog.asset
+- Assets/Art/Audio/ui_button_click.wav
+- Assets/Art/Audio/lobby_bgm_loop.wav
+Dependencies: []

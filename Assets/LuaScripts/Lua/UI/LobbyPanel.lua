@@ -19,6 +19,7 @@ end
 
 -- UIManager 打开面板 → UIPanel.CallOpen → 到这里
 function LobbyPanel:OnOpen(data)
+    self:PlayLobbyMusic()
     -- Presenter → View：绑定控件
     self.view:BindClick("Btn_Start", "OnClickStart")
     self.view:BindClick("Btn_Rank", "OnClickRank")
@@ -37,7 +38,19 @@ end
 
 -- 面板还开着时被再 Open 一次走这条
 function LobbyPanel:OnRefresh(data)
+    self:PlayLobbyMusic()
     self:Refresh()
+end
+
+-- 音乐随大厅生命周期；普通弹窗叠加不会关闭大厅。
+function LobbyPanel:PlayLobbyMusic()
+    if Audio == nil or AudioResources == nil then return end
+
+    local clip = AudioResources:GetClip("common", "lobby_bgm_loop")
+    if clip ~= nil then
+        -- 同曲重复请求由 AudioManager 保持进度，不从头播放。
+        Audio:PlayMusic(clip)
+    end
 end
 
 -- View → Presenter 的入口（方法名必须和 BindClick 第二参一致）
@@ -112,7 +125,9 @@ function LobbyPanel:SetAvatar(id)
 end
 
 function LobbyPanel:OnClose()
-    -- 订阅已由 ReleaseEvents 统一退掉，这里没有额外要清的
+    if Audio ~= nil then
+        Audio:StopMusic()
+    end
 end
 
 return LobbyPanel

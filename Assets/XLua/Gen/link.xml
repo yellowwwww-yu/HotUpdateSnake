@@ -3,7 +3,8 @@
 <linker>
 
 	<assembly fullname="Assembly-CSharp">
-	    <type fullname="LocalBagItemData" preserve="all"/>
+	    <type fullname="AudioBundleLoader" preserve="all"/>
+		<type fullname="LocalBagItemData" preserve="all"/>
 		<type fullname="LocalBagData" preserve="all"/>
 		<type fullname="LocalBagLoadResult" preserve="all"/>
 		<type fullname="LocalBagFile" preserve="all"/>
@@ -22,6 +23,7 @@
 		<type fullname="Framework.UI.UIManager" preserve="all"/>
 		<type fullname="Framework.UI.PopupView" preserve="all"/>
 		<type fullname="Framework.Pool.PoolManager" preserve="all"/>
+		<type fullname="Framework.Audio.AudioManager" preserve="all"/>
 		<type fullname="Tutorial.DerivedClass+TestEnumInner" preserve="all"/>
 		
 	</assembly>

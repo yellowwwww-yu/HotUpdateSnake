@@ -14,6 +14,11 @@ namespace Framework.UI
     [LuaCallCSharp]
     public class UIBind : MonoBehaviour
     {
+        // 全部 UIBind 共用点击音缓存；加载器或 Downloader 更换后重新取用。
+        private static AudioClip clickClip;
+        private static AudioBundleLoader clickResources;
+        private static Downloader clickDownloader;
+
         private Dictionary<string, GameObject> lookup = new Dictionary<string, GameObject>();
 
         /// <summary>面板返回自己的 Lua 模块表（按钮回调往它上面转发）；列表格子没有模块，返回 null</summary>
@@ -82,14 +87,21 @@ namespace Framework.UI
                 return;
             }
 
+            PrepareClickSound();
+
             // 格子会被池复用，不先清监听器会越叠越多，表现是点一次触发多次
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => CallModule(method));
+            button.onClick.AddListener(() =>
+            {
+                PlayClickSound();
+                CallModule(method);
+            });
         }
 
         /// <summary>给 ScrollListView 用：把格子里的按钮统一接到一个出口，回调会带上 key</summary>
         internal void BindAllButton(Action<UIBind, string> handler)
         {
+            PrepareClickSound();
             foreach (KeyValuePair<string,GameObject> pair in lookup)
             {
                 Button button = pair.Value.GetComponent<Button>();
@@ -99,8 +111,49 @@ namespace Framework.UI
                 }
 
                 button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() => handler(this, pair.Key));
+                button.onClick.AddListener(() =>
+                {
+                    PlayClickSound();
+                    handler(this, pair.Key);
+                });
             }
+        }
+
+        // 通用界面反馈：不判断按钮业务结果，也不替代原有点击回调。
+        private static void PrepareClickSound()
+        {
+            var resources = AudioBundleLoader.Instance;
+            var downloader = Downloader.Instance;
+            if (resources == null || downloader == null || !downloader.isReady)
+            {
+                clickResources = null;
+                clickDownloader = null;
+                clickClip = null;
+                return;
+            }
+
+            if (clickResources != resources || clickDownloader != downloader)
+            {
+                clickResources = resources;
+                clickDownloader = downloader;
+                clickClip = null;
+            }
+
+            // 成功后直接复用引用；失败不缓存，后续点击仍可重试。
+            if (clickClip == null)
+                clickClip = resources.GetClip("common", "ui_button_click");
+
+        }
+
+        // 常规情况下只用预取缓存；资源管理器重建后也能在这里恢复。
+        private static void PlayClickSound()
+        {
+            var player = Framework.Audio.AudioManager.Instance;
+            if (player == null || !player.isActiveAndEnabled) return;
+
+            PrepareClickSound();
+            if (clickClip != null && clickClip.loadState == AudioDataLoadState.Loaded)
+                player.PlaySound(clickClip);
         }
 
         public void BindInputChanged(string key, string method)

@@ -1,0 +1,24 @@
+ManifestFileVersion: 0
+CRC: 4269796658
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b07571871bcb77be93125c45fe696256
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 22a87e4aae158cb0932d88c5e149e58e
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: b07571871bcb77be93125c45fe696256
+HashAppended: 0
+ClassTypes:
+- Class: 114
+  Script: {fileID: 11500000, guid: 4c57c0d619564d140aa28382426269b3, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: AudioBundleSettings/Group
+Assets:
+- Assets/Config/AudioCatalog/AudioBundleSettings.asset
+Dependencies: []

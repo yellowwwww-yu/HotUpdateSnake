@@ -22,6 +22,9 @@ namespace XLua.CSObjectWrap
         static void wrapInit0(LuaEnv luaenv, ObjectTranslator translator)
         {
         
+            translator.DelayWrapLoader(typeof(AudioBundleLoader), AudioBundleLoaderWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(LocalBagItemData), LocalBagItemDataWrap.__Register);
         
         
@@ -77,6 +80,9 @@ namespace XLua.CSObjectWrap
         
         
             translator.DelayWrapLoader(typeof(Framework.Pool.PoolManager), FrameworkPoolPoolManagerWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(Framework.Audio.AudioManager), FrameworkAudioAudioManagerWrap.__Register);
         
         
             translator.DelayWrapLoader(typeof(Tutorial.DerivedClass.TestEnumInner), TutorialDerivedClassTestEnumInnerWrap.__Register);

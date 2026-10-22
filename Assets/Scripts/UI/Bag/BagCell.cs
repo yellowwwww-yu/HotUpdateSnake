@@ -1,3 +1,4 @@
+using Framework.Audio;
 using Framework.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -86,6 +87,8 @@ public class BagCell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             data.Set("id", itemId);
             data.Set("rect", (RectTransform)transform);
             UIManager.Instance.Open("ItemOperatePopup", data);
+            AudioClip clickClip = AudioBundleLoader.Instance.GetClip("common", "ui_button_click");
+            AudioManager.Instance.PlaySound(clickClip);
         }
     }
 
