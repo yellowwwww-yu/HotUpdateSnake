@@ -10,6 +10,8 @@ public delegate void BagBeforeMoveCallBack();
 [RequireComponent(typeof(InfiniteScroll))]
 public class BagListView : MonoBehaviour
 {
+    private const string ItemSpriteGroup = "items";
+
     private InfiniteScroll scrool;
     private List<BagItem> datas = new List<BagItem>();
     private int column = 6;
@@ -29,6 +31,7 @@ public class BagListView : MonoBehaviour
         public string name;
         public int count;
         public string desc;
+        public string iconKey;
     }
 
     public void BindBeforeMove(BagBeforeMoveCallBack callback)
@@ -55,7 +58,8 @@ public class BagListView : MonoBehaviour
                     id = row.Get<string, int>("id"),
                     name = row.Get<string, string>("name"),
                     count = row.Get<string, int>("count"),
-                    desc = row.Get<string, string>("desc")
+                    desc = row.Get<string, string>("desc"),
+                    iconKey = row.Get<string, string>("iconKey")
                 };
                 datas.Add(item);
             }
@@ -126,6 +130,14 @@ public class BagListView : MonoBehaviour
         bagCell.SetTxt_Num(info.count);
         bagCell.SetName(info.name);
         bagCell.SetDesc(info.desc);
+
+        Sprite icon = null;
+        SpriteBundleLoader loader = SpriteBundleLoader.Instance;
+        if (loader != null && !string.IsNullOrWhiteSpace(info.iconKey))
+            icon = loader.GetSprite(ItemSpriteGroup, info.iconKey);
+
+        // 复用格子时始终覆盖图片，读取失败也不能保留上一物品的图标。
+        bagCell.SetImg_Item(icon);
     }
 
     private GameObject GetCell(RectTransform row)

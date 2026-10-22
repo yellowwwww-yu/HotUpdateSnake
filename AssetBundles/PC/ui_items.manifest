@@ -1,0 +1,32 @@
+ManifestFileVersion: 0
+CRC: 4251135945
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: bc2160d665f2c49545a265862c584d78
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c2c09293927d7b51564520a9bf3981de
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: bc2160d665f2c49545a265862c584d78
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 48feea8e551f84b4f9586172db1f7486, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 687078895
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: SpriteCatalog/Entry
+Assets:
+- Assets/Config/SpriteCatalog/Catalogs/ItemSpriteCatalog.asset
+- Assets/Art/UI/Items/Items.spriteatlasv2
+- Assets/Art/UI/Items/Items.png
+Dependencies: []

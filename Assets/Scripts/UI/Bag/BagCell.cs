@@ -20,7 +20,7 @@ public class BagCell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public void Init(Sprite bg, Sprite item, int count, string itemName, string desc)
     {
         Img_Bg.sprite = bg;
-        Img_Item.sprite = item;
+        SetImg_Item(item);
         Txt_Num.text = count.ToString();
         this.itemName = itemName;
         this.desc = desc;
@@ -34,6 +34,8 @@ public class BagCell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public void SetImg_Item(Sprite sprite)
     {
         Img_Item.sprite = sprite;
+        Img_Item.preserveAspect = true;
+        Img_Item.enabled = sprite != null;
     }
 
     public void SetTxt_Num(int count)
@@ -95,5 +97,6 @@ public class BagCell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         }
         hovering = false;
         itemId = 0;
+        if (Img_Item != null) SetImg_Item(null);
     }
 }

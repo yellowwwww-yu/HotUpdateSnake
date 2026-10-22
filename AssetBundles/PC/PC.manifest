@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 2542364811
+CRC: 1176840538
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -14,4 +14,10 @@ AssetBundleManifest:
         Dependency_0: ui_sprite
     Info_3:
       Name: ui_sprite
+      Dependencies: {}
+    Info_4:
+      Name: ui_items
+      Dependencies: {}
+    Info_5:
+      Name: sprite_bundlesettings
       Dependencies: {}

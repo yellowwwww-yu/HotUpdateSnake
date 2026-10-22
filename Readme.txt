@@ -24,3 +24,20 @@ M / V / P 分别是什么：
 
 	数据流：View →(点击) Presenter →(读写) Model →(广播) Presenter →(刷新) View
 			View 与 Model 之间没有引用。
+
+
+关于精灵资源的 AB 分包：
+
+	建议按资源组，将对应的 SpriteCatalog、SpriteAtlas 和源图片（含 Sprite 切片）放在同一个 AB 包中，便于统一加载、释放和更新。
+	例如 ui_items 包含 ItemSpriteCatalog、Items 图集和 Items.png；头像等其他资源组单独分包。
+	切片随源图片设置包归属，无需逐个分包；多个系统共用的素材统一放入共享资源组。
+
+
+关于 SpriteBundleSettings 的字段命名与填写：
+
+	id：自定义资源组标识，非空且在设置中唯一，区分大小写；建议使用小写英文加下划线，如 items。
+	bundle：填写真实 AB 包名，与资源的包标签一致，如 ui_items。
+	catalog：直接填写对应 SpriteCatalog 的资产名，不带路径和 .asset，如 ItemSpriteCatalog；同一 AB 内的目录资产名保持唯一。
+	物品组示例：id = items，bundle = ui_items，catalog = ItemSpriteCatalog。
+	调用 GetSprite("items", "Items_0") 时，第一个参数对应组 id，第二个参数对应目录条目的 key；两者均区分大小写。
+	设置文件自身保持名为 SpriteBundleSettings.asset，所属 AB 包为 sprite_bundlesettings，与当前加载器中的固定地址对应。

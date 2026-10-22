@@ -1,0 +1,24 @@
+ManifestFileVersion: 0
+CRC: 691331675
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 376036d13d2070510223c5ab892468da
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c139741732893fb30dd733dea8d7749e
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 376036d13d2070510223c5ab892468da
+HashAppended: 0
+ClassTypes:
+- Class: 114
+  Script: {fileID: 11500000, guid: 3283f111b3cade84b99202cdde516188, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: SpriteBundleSettings/Group
+Assets:
+- Assets/Config/SpriteCatalog/SpriteBundleSettings.asset
+Dependencies: []
