@@ -13,6 +13,8 @@
 		<type fullname="LocalPlayerData" preserve="all"/>
 		<type fullname="LocalAccountData" preserve="all"/>
 		<type fullname="LocalAccountFile" preserve="all"/>
+		<type fullname="ScreenBrightness" preserve="all"/>
+		<type fullname="SettingsStorage" preserve="all"/>
 		<type fullname="Tutorial.BaseClass" preserve="all"/>
 		<type fullname="Tutorial.TestEnum" preserve="all"/>
 		<type fullname="Tutorial.DerivedClass" preserve="all"/>

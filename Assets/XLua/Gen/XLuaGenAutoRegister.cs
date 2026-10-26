@@ -52,6 +52,12 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(LocalAccountFile), LocalAccountFileWrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(ScreenBrightness), ScreenBrightnessWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(SettingsStorage), SettingsStorageWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(Tutorial.BaseClass), TutorialBaseClassWrap.__Register);
         
         

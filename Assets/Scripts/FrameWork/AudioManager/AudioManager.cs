@@ -39,8 +39,8 @@ namespace Framework.Audio
             if (Instance != this) return;
 
             maxSounds = Mathf.Max(1, maxSounds);
-            musicVolume = NormalizeVolume(musicVolume);
-            soundVolume = NormalizeVolume(soundVolume);
+            musicVolume = SettingsStorage.MusicVolume;
+            soundVolume = SettingsStorage.SoundVolume;
 
             audioRoot = new GameObject("AudioPlayers").transform;
             audioRoot.SetParent(transform, false);

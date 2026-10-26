@@ -156,6 +156,65 @@ namespace Framework.UI
                 player.PlaySound(clickClip);
         }
 
+        public void BindSliderChanged(string key, string method)
+        {
+            GameObject node = Get(key);
+            if (node == null || string.IsNullOrEmpty(method)) return;
+        
+            Slider slider = node.GetComponent<Slider>();
+            if (slider == null) return;
+        
+            slider.onValueChanged.RemoveAllListeners();
+            slider.onValueChanged.AddListener(value => CallModule(method, value));
+        }
+        
+        public void UnBindSliderChanged(string key)
+        {
+            GameObject node = Get(key);
+            if (node == null) return;
+        
+            Slider slider = node.GetComponent<Slider>();
+            if (slider != null) slider.onValueChanged.RemoveAllListeners();
+        }
+        
+
+        public void BindToggleChanged(string key, string method)
+        {
+            GameObject node = Get(key);
+            if (node == null || string.IsNullOrEmpty(method)) return;
+            Toggle toggle = node.GetComponent<Toggle>();
+            if (toggle == null) return;
+            toggle.onValueChanged.RemoveAllListeners();
+            toggle.onValueChanged.AddListener(value => CallModule(method, value));
+        }
+        
+        public void UnBindToggleChanged(string key)
+        {
+            GameObject node = Get(key);
+            if (node == null) return;
+            Toggle toggle = node.GetComponent<Toggle>();
+            if (toggle != null) toggle.onValueChanged.RemoveAllListeners();
+        }
+        
+        public void BindDropdownChanged(string key, string method)
+        {
+            GameObject node = Get(key);
+            if (node == null || string.IsNullOrEmpty(method)) return;
+            Dropdown dropdown = node.GetComponent<Dropdown>();
+            if (dropdown == null) return;
+            dropdown.onValueChanged.RemoveAllListeners();
+            dropdown.onValueChanged.AddListener(value => CallModule(method, value));
+        }
+        
+        public void UnBindDropdownChanged(string key)
+        {
+            GameObject node = Get(key);
+            if (node == null) return;
+            Dropdown dropdown = node.GetComponent<Dropdown>();
+            if (dropdown != null) dropdown.onValueChanged.RemoveAllListeners();
+        }
+        
+
         public void BindInputChanged(string key, string method)
         {
             GameObject inputObj = Get(key);

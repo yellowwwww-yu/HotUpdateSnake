@@ -24,6 +24,7 @@ function LobbyPanel:OnOpen(data)
     self.view:BindClick("Btn_Start", "OnClickStart")
     self.view:BindClick("Btn_Rank", "OnClickRank")
     self.view:BindClick("Btn_Bag", "OnClickBag")
+    self.view:BindClick("Btn_Set", "OnClickSettings")
 
     -- Model → Presenter：订阅。
     -- EventCenter 广播时只传数据、不传 self（内部是 pcall(callback, data)），
@@ -60,6 +61,10 @@ end
 
 function LobbyPanel:OnClickBag()
     UIManager:Open("BagPanel")
+end
+
+function LobbyPanel:OnClickSettings()
+    UIManager:Open("SettingsPanel")
 end
 
 function LobbyPanel:OnClickStart()
