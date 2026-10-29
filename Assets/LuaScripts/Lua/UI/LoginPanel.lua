@@ -10,6 +10,7 @@ local Color = CS.UnityEngine.Color
 
 local Input_Account
 local Input_Password
+local Img_Eye
 local Txt_Account_Tip
 local Txt_Password_Tip
 local Txt_Tip
@@ -21,6 +22,12 @@ local passwordLimitMax = 12
 
 local accountAccepted = false
 local passwordAccepted = false
+
+local function UpdateEyeIcon()
+    local iconName = Input_Password.contentType == InputField.ContentType.Password
+        and "Eye_Close" or "Eye_Open"
+    Img_Eye.sprite = Downloader:GetSprite("ui_sprite", iconName)
+end
 
 local function FindPlayer(data, account)
     for i=0, data.players.Count - 1 do
@@ -34,6 +41,7 @@ end
 function LoginPanel:OnOpen(data)
     Input_Account = self.view:Get("Input_Account"):GetComponent("InputField")
     Input_Password = self.view:Get("Input_Password"):GetComponent("InputField")
+    Img_Eye = self.view:Get("Btn_Eye"):GetComponent("Image")
     Txt_Account_Tip = self.view:Get("Txt_Account_Tip"):GetComponent("Text")
     Txt_Password_Tip = self.view:Get("Txt_Password_Tip"):GetComponent("Text")
     Txt_Tip = self.view:Get("Txt_Tip"):GetComponent("Text")
@@ -50,6 +58,7 @@ function LoginPanel:OnOpen(data)
     Txt_Tip.text = ""
 
     Input_Password.characterLimit = passwordLimitMax
+    UpdateEyeIcon()
 end
 
 function LoginPanel:OnAccountChanged(value)
@@ -177,6 +186,7 @@ function LoginPanel:OnClickEye()
         Input_Password.contentType = InputField.ContentType.Password
     end
     Input_Password:ForceLabelUpdate()
+    UpdateEyeIcon()
 end
 
 function LoginPanel:OnClose()

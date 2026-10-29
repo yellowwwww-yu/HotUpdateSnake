@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 259811070
+CRC: 1269136831
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 5062f94f35b52019ad2c9043baa0557b
+    Hash: 73d0db19f06a551815eea1d761dc1162
   TypeTreeHash:
     serializedVersion: 2
     Hash: 4b5f44a6395d165f5877da094e4f5058
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 5062f94f35b52019ad2c9043baa0557b
+    Hash: 73d0db19f06a551815eea1d761dc1162
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -117,6 +117,7 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.UI.Toggle/ToggleEvent
 Assets:
 - Assets/Prefab/UI/Popups/ItemOperatePopup.prefab
+- Assets/Prefab/UI/Panels/UIPanel_Exit.prefab
 - Assets/Prefab/UI/Panels/UIPanel_Bag.prefab
 - Assets/Prefab/UI/Panels/UIPanel_Lobby.prefab
 - Assets/Prefab/UI/BagCell.prefab

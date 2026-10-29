@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2315093692
+CRC: 2594289886
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 43d0dd83726a9168c73267e6d40b06ef
+    Hash: 89b5e7331c639197ecd82a04c3cbacac
   TypeTreeHash:
     serializedVersion: 2
     Hash: 2d8df09e698f722ada1caa03d3413830
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 43d0dd83726a9168c73267e6d40b06ef
+    Hash: 89b5e7331c639197ecd82a04c3cbacac
 HashAppended: 0
 ClassTypes:
 - Class: 28
@@ -22,8 +22,11 @@ Assets:
 - Assets/Art/UI/Sprite sheets/UI Big Play Button.png
 - Assets/Art/UI/Sprite sheets/Mouse sprites/Catpaw pointing Mouse icon.png
 - Assets/Art/UI/Sprite sheets/Mouse sprites/Triangle Mouse icon 3.png
+- Assets/Art/UI/Eye_Open.png
+- Assets/Art/UI/Eye_Close.png
 - Assets/Art/UI/Sprite sheets/Icons/white icons.png
 - Assets/Art/UI/Sprite sheets/Sprite sheet for Basic Pack.png
+- "Assets/Art/UI/\u5927\u5385\u80CC\u666F2.png"
 - Assets/Art/UI/Sprite sheets/Mouse sprites/Triangle Mouse icon 2.png
 - Assets/Art/UI/Sprite sheets/buttons/Small Square Buttons.png
 - Assets/Art/UI/Sprite sheets/Setting menu.png
@@ -31,6 +34,7 @@ Assets:
 - Assets/Art/UI/Sprite sheets/Dialouge UI/dialog box small.png
 - Assets/Art/UI/Sprite sheets/Dialouge UI/Premade dialog box  big.png
 - Assets/Art/UI/Sprite sheets/Dialouge UI/dialog box medium.png
+- "Assets/Art/UI/\u5927\u5385\u80CC\u666F.png"
 - Assets/Art/UI/Sprite sheets/Dialouge UI/dialog box big.png
 - Assets/Art/UI/Sprite sheets/Dialouge UI/Premade dialog box medium.png
 - Assets/Art/UI/Sprite sheets/Mouse sprites/Catpaw Mouse icon.png

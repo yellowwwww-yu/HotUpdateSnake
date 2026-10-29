@@ -192,6 +192,7 @@ GameObject:
   m_Component:
   - component: {fileID: 394441274}
   - component: {fileID: 394441273}
+  - component: {fileID: 394441275}
   m_Layer: 0
   m_Name: LuaManager
   m_TagString: Untagged
@@ -228,6 +229,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 257800995}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &394441275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394441272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dbd524c91d324d4283dc2b74ff91a1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &552204623
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,6 +937,11 @@ MonoBehaviour:
     asset: UIPanel_Settings
     layer: 1
     cache: 1
+  - name: ExitPanel
+    bundle: ui_prefab
+    asset: UIPanel_Exit
+    layer: 2
+    cache: 1
   cacheCapacity: 5
 --- !u!1 &1481767702
 GameObject:
@@ -1129,6 +1147,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 582531877}
     m_Modifications:
+    - target: {fileID: 6171334576658213730, guid: daa76ebde9bea5840bda5e24ef670cdd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7780319388626846163, guid: daa76ebde9bea5840bda5e24ef670cdd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7899163911314847483, guid: daa76ebde9bea5840bda5e24ef670cdd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

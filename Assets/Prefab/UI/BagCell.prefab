@@ -133,6 +133,7 @@ MonoBehaviour:
   Img_Bg: {fileID: 1654100192625661197}
   Img_Item: {fileID: 6231618479482779564}
   Txt_Num: {fileID: 2505821719633653204}
+  descOffset: {x: 0, y: 0}
 --- !u!1 &1969546371697826708
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,8 +199,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 854703229, guid: df27dbd8c60fa7f49bbb18a34dd1169a, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

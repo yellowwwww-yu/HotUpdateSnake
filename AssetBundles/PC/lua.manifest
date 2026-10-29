@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2161955575
+CRC: 1520423890
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: f53ea3a9a50ae7cbcde2f16ecc180002
+    Hash: b99f0bec6334ee3c19f04e570ef0a8b9
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: f53ea3a9a50ae7cbcde2f16ecc180002
+    Hash: b99f0bec6334ee3c19f04e570ef0a8b9
 HashAppended: 0
 ClassTypes:
 - Class: 49
@@ -29,6 +29,7 @@ Assets:
 - Assets/LuaScripts/LuaText/UI/ItemOperatePopup.lua.txt
 - Assets/LuaScripts/LuaText/UI/SettingsPanel.lua.txt
 - Assets/LuaScripts/LuaText/Game/SnakeDemo.lua.txt
+- Assets/LuaScripts/LuaText/UI/ExitPanel.lua.txt
 - Assets/LuaScripts/LuaText/Model/RankModel.lua.txt
 - Assets/LuaScripts/LuaText/UI/BagPanel.lua.txt
 Dependencies: []
